@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "core.hpp"
+#include "Vector3D.h"
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
 

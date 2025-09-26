@@ -1,15 +1,13 @@
 #pragma once
+#include <algorithm>
 class Vector3D
 {
-	struct vector {
-		int x;
-		int y;
-		int z;
-	};
-	Vector3D();
-	void Normalize();
-	void scalarX();
-	void dotX();
-
+private:
+	int x, y, z;
+public:
+	Vector3D(int x, int y, int z);
+	Vector3D Normalize();
+	int scalarX(Vector3D seg);
+	Vector3D vectorialX(Vector3D seg);
 };
 
