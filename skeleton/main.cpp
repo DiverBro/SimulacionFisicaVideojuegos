@@ -6,6 +6,7 @@
 
 #include "core.hpp"
 #include "Vector3D.h"
+#include "Particle.h"
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
 
@@ -30,6 +31,7 @@ PxPvd* gPvd = NULL;
 PxDefaultCpuDispatcher* gDispatcher = NULL;
 PxScene* gScene = NULL;
 ContactReportCallback gContactReportCallback;
+Particle* part;
 
 
 // Initialize physics engine
@@ -55,10 +57,21 @@ void initPhysics(bool interactive)
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
-	RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)), new PxTransform(0.0f, 0.0f, 0.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-	RenderItem* render_Item1 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)), new PxTransform(-10.0f, -10.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f, 1.0f));
-	RenderItem* render_Item2 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)), new PxTransform(10.0f, 0.0f, 0.0f), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
-	RenderItem* render_Item3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)), new PxTransform(0.0f, 10.0f, 0.0f), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+	Vector3D x(1, 0, 0);
+	Vector3D y(0, 1, 0);
+	Vector3D z(0, 0, 1);
+	Vector3D centre(0, 0, 0);
+
+	RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+		new PxTransform(centre.getX(), centre.getY(), centre.getZ()), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	RenderItem* render_Item1 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+		new PxTransform(-x.getX() * 10, -y.getY() * 10, centre.getZ()), Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+	RenderItem* render_Item2 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+		new PxTransform(x.getX() * 10, centre.getY() * 10, centre.getZ()), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+	RenderItem* render_Item3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+
+	part = new Particle(Vector3D(0, 0, 0), Vector3D(-1, 0, -1), Vector3D(-1.01, 0, -1.01), 1);
 }
 
 
@@ -71,6 +84,7 @@ void stepPhysics(bool interactive, double t)
 
 	gScene->simulate(t);
 	gScene->fetchResults(true);
+	part->integrate(t);
 }
 
 // Function to clean data
@@ -89,6 +103,7 @@ void cleanupPhysics(bool interactive)
 	transport->release();
 
 	gFoundation->release();
+	delete part;
 }
 
 // Function called when a key is pressed

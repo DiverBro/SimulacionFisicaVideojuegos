@@ -1,16 +1,16 @@
 #include "Vector3D.h"
 
-Vector3D::Vector3D(int x, int y, int z) : x(x), y(y), z(z)
+Vector3D::Vector3D(double x, double y, double z) : x(x), y(y), z(z)
 {
 }
 
 Vector3D Vector3D::Normalize()
 {
-	int mod = sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
+	double mod = sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
 	return Vector3D(this->x / mod, this->y / mod, this->z / mod);
 }
 
-int Vector3D::scalarX(Vector3D seg)
+double Vector3D::scalarX(Vector3D seg)
 {
 	int xRes, yRes, zRes;
 	xRes = this->x * seg.x;
