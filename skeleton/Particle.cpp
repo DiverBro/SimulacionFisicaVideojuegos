@@ -1,19 +1,37 @@
 #include "Particle.h"
-using namespace physx;
 
-Particle::Particle(Vector3D pos, Vector3D vel, Vector3D ac, float dumping) : pose(pos.getX(), pos.getY(), pos.getZ()), vel(vel), ac(ac), dumping(dumping)
+Particle::Particle(PxVec3 pos, PxVec3 vel, Vector4 color, PxVec3 ace, double masa, double dumping, double tiempo, double size) :
+	vel(vel), ace(ace), masa(masa), dumping(dumping), tiempo(tiempo)
 {
-	renderItem = new RenderItem(CreateShape(PxSphereGeometry(1.0f)), &pose, Vector4(1.0f, 0.0f, 1.0f, 1.0f));
+	//Creamos la forma con la geometria
+	PxShape* sphere0 = CreateShape(PxSphereGeometry(size));
+
+	pose = new PxTransform(PxVec3(pos.x, pos.y, pos.z));
+	renderItem = new RenderItem(sphere0, pose, color);
+
+	RegisterRenderItem(renderItem);
 }
 
-void Particle::integrate(double t)
+Particle::~Particle()
 {
-	vel = vel * pow(dumping, t) + (ac * t);
-	pose.p.x += vel.getX() * t;
-	pose.p.y += vel.getY() * t;
-	pose.p.z += vel.getZ() * t;
+	if (renderItem != nullptr)
+	{
+		DeregisterRenderItem(renderItem);
+		delete renderItem;
+		renderItem = nullptr;
+	}
 
-	/*if (pose.p.x <= -50 || pose.p.z <= -50) {
-		pose = { 0, 0, 0 };
-	}*/
+	if (pose != nullptr)
+	{
+		delete pose;
+		pose = nullptr;
+	}
+}
+
+void Particle::integrateEuler(double t)
+{
+	pose->p += vel * t;
+	vel += ace * t;
+	vel *= pow(dumping, t);
+
 }

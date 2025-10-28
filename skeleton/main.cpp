@@ -7,6 +7,7 @@
 #include "core.hpp"
 #include "Vector3D.h"
 #include "Particle.h"
+#include "Proyectil.h"
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
 
@@ -32,6 +33,7 @@ PxDefaultCpuDispatcher* gDispatcher = NULL;
 PxScene* gScene = NULL;
 ContactReportCallback gContactReportCallback;
 Particle* part;
+Proyectil* pr;
 
 
 // Initialize physics engine
@@ -71,7 +73,7 @@ void initPhysics(bool interactive)
 	RenderItem* render_Item3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
-	part = new Particle(Vector3D(0, 0, 0), Vector3D(-1, 0, -1), Vector3D(-1.01, 0, -1.01), 1);
+	//pr = new Proyectil(Vector3D())
 }
 
 
@@ -84,7 +86,6 @@ void stepPhysics(bool interactive, double t)
 
 	gScene->simulate(t);
 	gScene->fetchResults(true);
-	part->integrate(t);
 }
 
 // Function to clean data

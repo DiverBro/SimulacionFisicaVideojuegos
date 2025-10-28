@@ -1,14 +1,13 @@
 #include "Proyectil.h"
-using namespace physx;
 
-Proyectil::Proyectil(Vector3D pos, Vector3D vel, Vector3D grav, float damping)
-	: pose(pos.getX(), pos.getY(), pos.getZ()), velSim(vel), grav(grav), damping(damping)
+Proyectil::Proyectil(PxVec3 pos, PxVec3 vel, Vector4 color, PxVec3 ace, double masa, double dumping, double tiempo) :
+	Particle(pos, vel, color, gravity, masa, dumping, tiempo, 1.0), grav(ace), color(color) {}
+
+Proyectil::~Proyectil() {}
+
+void Proyectil::shoot()
 {
-	renderItem = new RenderItem(CreateShape(PxSphereGeometry(1.0f)), &pose, Vector4(1.0f, 0.0f, 1.0f, 1.0f));
-}
+	Particle* part = new Particle(GetCamera()->getTransform().p, getVel(), color, grav, getMasa(), getDumping(), getTiempo(), 1.0);
 
-void Proyectil::masaSimulada()
-{
-	masaSim = masaReal * pow((velReal.getX() / velSim.getX()), 2);
+	PxVec3 dir = PxVec3(GetCamera()->getDir());
 }
-
