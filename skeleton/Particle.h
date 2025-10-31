@@ -1,40 +1,29 @@
 #pragma once
-
-#include <PxPhysicsAPI.h> //Para usar Vector3
-#include "RenderUtils.hpp" //Para RenderItem
-#include "Vector3D.h" //TODO: cambiar luego
-
-#include <chrono> //Para el delay en la integracion 
-#include <thread>
-
-using namespace physx;
-
+#include "Vector3D.h"
+#include <PxPhysicsAPI.h>
+#include "RenderUtils.hpp"
 
 class Particle
 {
 public:
-	Particle(PxVec3 pos, PxVec3 vel, Vector4 color, PxVec3 ace, double masa, double dumping, double tiempo, double size);
-	~Particle();
+	Particle(Vector3D pos, Vector3D vel, Vector3D ace, float m = 10.0, float dumping = 0.9, float grav = 9.8, float tiempo = 4.0f);
+	~Particle() { DeregisterRenderItem(renderItem); renderItem = nullptr; };
 
-	void integrateEuler(double t);
+	virtual void integ(double t);
 
-	inline RenderItem* getRenderItem() { return renderItem; }
-	inline PxVec3 getPose() { return pose->p; }
-	inline PxVec3 getVel() { return vel; }
-	inline PxVec3 getAce() { return ace; }
-	inline double getMasa() { return masa; }
-	inline double getDumping() { return dumping; }
-	inline double getTiempo() { return tiempo; }
-	inline bool isActivo() { return activo; }
-
+	float getT() const { return tiempo; };
+	Vector3D getVel() { return vel; };
+	Vector3D getPos() { return Vector3D(pose.p.x, pose.p.y, pose.p.z); };
+	void setT(float t) { tiempo = t; }
+	void setA(Vector3D a) { ace = a; }
+		
 private:
-
+	Vector3D vel;
+	physx::PxTransform pose;
 	RenderItem* renderItem;
-	PxTransform* pose; 
-	PxVec3 vel; 
-	PxVec3 ace; 
-	double masa; 
-	double dumping;
-	double tiempo; 
-	bool activo = false;
+	float dumping;
+	Vector3D ace;
+	float m;
+	float tiempo;
+	float grav;
 };

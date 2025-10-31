@@ -1,13 +1,20 @@
+//
 #include "Proyectil.h"
+#include "Vector3D.h"
 
-Proyectil::Proyectil(PxVec3 pos, PxVec3 vel, Vector4 color, PxVec3 ace, double masa, double dumping, double tiempo) :
-	Particle(pos, vel, color, gravity, masa, dumping, tiempo, 1.0), grav(ace), color(color) {}
 
-Proyectil::~Proyectil() {}
-
-void Proyectil::shoot()
+Proyectil::Proyectil(Vector3D pos, Vector3D dir, float velReal, float mReal, float velSim, float dumping, float grav) :
+	Particle(pos, dir.Normalize()* velSim, Vector3D(0, 0, 0), dumping, masaSim(mReal, velReal, velSim), gravSim(grav, velReal, velSim)), vel(velSim)
 {
-	Particle* part = new Particle(GetCamera()->getTransform().p, getVel(), color, grav, getMasa(), getDumping(), getTiempo(), 1.0);
+	setA(Vector3D(0.0f, -grav, 0.0f));
+};
 
-	PxVec3 dir = PxVec3(GetCamera()->getDir());
+float Proyectil::masaSim(float mReal, float velSim, float velReal)
+{
+	return (mReal * pow(velReal, 2)) / pow(velSim, 2);
+}
+
+float Proyectil::gravSim(float grav, float velSim, float velReal)
+{
+	return (grav * pow(velSim, 2)) / pow(velReal, 2);
 }

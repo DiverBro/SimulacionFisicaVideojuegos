@@ -4,6 +4,10 @@ Vector3D::Vector3D(double x, double y, double z) : x(x), y(y), z(z)
 {
 }
 
+Vector3D::Vector3D(physx::PxVec3 v) : x(v.x), y(v.y), z(v.z)
+{
+}
+
 Vector3D Vector3D::Normalize()
 {
 	double mod = sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));

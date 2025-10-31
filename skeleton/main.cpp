@@ -73,7 +73,6 @@ void initPhysics(bool interactive)
 	RenderItem* render_Item3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
-	//pr = new Proyectil(Vector3D())
 }
 
 
@@ -85,6 +84,10 @@ void stepPhysics(bool interactive, double t)
 	PX_UNUSED(interactive);
 
 	gScene->simulate(t);
+	if (pr != nullptr) {
+		pr->integ(t);
+	}
+
 	gScene->fetchResults(true);
 }
 
@@ -114,10 +117,10 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 	switch (toupper(key))
 	{
-		//case 'B': break;
-		//case ' ':	break;
+	case 'p':
 	case ' ':
 	{
+		pr = new Proyectil(Vector3(GetCamera()->getTransform().p), Vector3(GetCamera()->getDir()), 1800.0f, 5.0f, 10.0f);
 		break;
 	}
 	default:

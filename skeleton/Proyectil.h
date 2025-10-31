@@ -1,30 +1,17 @@
 #pragma once
+#include "Particle.h"
 
-#include <PxPhysicsAPI.h> //Para usar Vector3
-#include "RenderUtils.hpp" //Para RenderItem
-#include "Vector3D.h" //TODO: cambiar luego
-#include <vector> //Para el vector de proyectiles
-#include "Particle.h" 
-
-using namespace physx;
 
 class Proyectil : public Particle
 {
 public:
-	Proyectil(PxVec3 pos, PxVec3 vel, Vector4 color, PxVec3 ace, double masa, double dumping, double tiempo);
 
-	enum class ProyectilType { Bullet, CanonBall, Bubble };
+	Proyectil(Vector3D pos, Vector3D dir, float velReal, float mReal, float velSim, float dumping = 1.0, float grav = 9.8);
 
-	void shoot();
+	virtual ~Proyectil() {};
 
-	~Proyectil() {};
-
-	inline PxVec3 getGravity() { return grav; }
-
-	inline void setGravity(PxVec3 newGravity) { grav = newGravity; }
-
-
+	float masaSim(float mReal, float velSim, float velReal);
+	float gravSim(float grav, float velSim, float velReal);
 private:
-	PxVec3 grav;
-	Vector4 color;
+	float vel;
 };

@@ -8,6 +8,7 @@ private:
 	double x, y, z;
 public:
 	Vector3D(double x, double y, double z);
+	Vector3D(physx::PxVec3 v);
 	Vector3D Normalize();
 	double scalarX(Vector3D seg);
 	Vector3D vectorialX(Vector3D seg);
