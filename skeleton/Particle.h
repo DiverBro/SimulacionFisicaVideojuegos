@@ -6,7 +6,7 @@
 class Particle
 {
 public:
-	Particle(Vector3D pos, Vector3D vel, Vector3D ace, float dumping, float masa = 10.0f, float grav = -9.8f, Vector4 col = { 1.0f, 0.0f, 0.0f, 1.0f });
+	Particle(Vector3D pos, Vector3D vel, Vector3D ace, float dumping, float tam = 1.0f, float tiempo = 4.0f, float masa = 10.0f, float grav = -9.8f, Vector4 col = { 1.0f, 0.0f, 0.0f, 1.0f });
 	~Particle() { DeregisterRenderItem(renderItem); renderItem = nullptr; };
 
 	virtual void integ(double t);
@@ -15,9 +15,11 @@ public:
 	physx::PxVec3 getPose() { return pose.p; };
 	float getDumping() { return dumping; };
 	float getMasa() { return masa; };
+	float getTiempo() { return tiempo; };
 	void setVel(Vector3D v) { vel = v; };
 	void setPose(physx::PxVec3 pos) { pose.p = pos; };
 	void setAce(Vector3D a) { ace = a; };
+	void setTiempo(float t) { tiempo = t; };
 
 private:
 	Vector3D vel;
@@ -27,5 +29,6 @@ private:
 	Vector3D ace;
 	float grav;
 	float masa;
+	float tiempo;
 };
 

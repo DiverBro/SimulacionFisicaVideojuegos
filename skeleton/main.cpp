@@ -9,6 +9,7 @@
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
 #include "Proyectil.h"
+#include "ParticleSystem.h"
 
 #include <iostream>
 
@@ -35,6 +36,7 @@ ContactReportCallback gContactReportCallback;
 
 Particle* part;
 vector<Proyectil*> pr;
+ParticleSystem* pS;
 
 
 // Initialize physics engine
@@ -65,16 +67,18 @@ void initPhysics(bool interactive)
 	Vector3D z(0, 0, 1);
 	Vector3D centre(0, 0, 0);
 
-	RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+	//EJES
+	/*RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(centre.getX(), centre.getY(), centre.getZ()), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 	RenderItem* eje1 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(-x.getX() * 10, -y.getY() * 10, centre.getZ()), Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 	RenderItem* eje2 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(x.getX() * 10, centre.getY() * 10, centre.getZ()), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	RenderItem* eje3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
-		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));*/
 
-	part = new Particle(Vector3D(0, 0, 0), Vector3D(-10, 0, -10), Vector3D(-1, 0, 0), 0.999);
+		//part = new Particle(Vector3D(0, 0, 0), Vector3D(-10, 0, -10), Vector3D(-1, 0, 0), 0.999);
+	pS = new ParticleSystem(1);
 }
 
 
@@ -90,6 +94,8 @@ void stepPhysics(bool interactive, double t)
 	for (Proyectil* p : pr) {
 		p->integ(t);
 	}
+
+	pS->update(t);
 
 
 	gScene->fetchResults(true);
