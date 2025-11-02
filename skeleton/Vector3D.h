@@ -26,8 +26,16 @@ public:
 		return Vector3D(this->x * n, this->y * n, this->z * n);
 	}
 
+	Vector3D operator/(double n) {
+		return Vector3D(this->x / n, this->y / n, this->z / n);
+	}
+
 	Vector3D operator*(Vector3D n) {
 		return Vector3D(this->x * n.getX(), this->y * n.getY(), this->z * n.getZ());
+	}
+
+	Vector3D operator/(Vector3D n) {
+		return Vector3D(this->x / n.getX(), this->y / n.getY(), this->z / n.getZ());
 	}
 
 	Vector3D operator+(Vector3D n) {

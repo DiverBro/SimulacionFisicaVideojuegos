@@ -8,7 +8,7 @@
 #include "Vector3D.h"
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
-#include "Particle.h"
+#include "Proyectil.h"
 
 #include <iostream>
 
@@ -16,6 +16,7 @@ std::string display_text = "This is a test";
 
 
 using namespace physx;
+using namespace std;
 
 PxDefaultAllocator		gAllocator;
 PxDefaultErrorCallback	gErrorCallback;
@@ -33,6 +34,7 @@ PxScene* gScene = NULL;
 ContactReportCallback gContactReportCallback;
 
 Particle* part;
+vector<Proyectil*> pr;
 
 
 // Initialize physics engine
@@ -85,7 +87,10 @@ void stepPhysics(bool interactive, double t)
 
 	gScene->simulate(t);
 
-	part->integ(t);
+	for (Proyectil* p : pr) {
+		p->integ(t);
+	}
+
 
 	gScene->fetchResults(true);
 }
@@ -118,6 +123,18 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	{
 	case ' ':
 	{
+		break;
+	}
+	case 'J': {//BALA DE TANQUE
+		pr.push_back(new Proyectil(GetCamera()->getTransform().p, GetCamera()->getDir(), Vector3D(0, 0, 0), 1800.0f, 25.0f, 10.0f, { 1.0f, 0.0f, 0.0f, 1.0f }));
+		break;
+	}
+	case'K': {//BALA DE PISTOLA
+		pr.push_back(new Proyectil(GetCamera()->getTransform().p, GetCamera()->getDir(), Vector3D(0, 0, 0), 330.0f, 5.0f, 10.0f, { 0.0f, 1.0f, 0.0f, 1.0f }));
+		break;
+	}
+	case'L': {//BALA DE CAÑON
+		pr.push_back(new Proyectil(GetCamera()->getTransform().p, GetCamera()->getDir(), Vector3D(0, 0, 0), 250.0f, 15.0f, 10.0f, { 0.0f, 0.0f, 1.0f, 1.0f }));
 		break;
 	}
 	default:
