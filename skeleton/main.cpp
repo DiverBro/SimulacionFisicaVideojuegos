@@ -8,6 +8,7 @@
 #include "Vector3D.h"
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
+#include "Particle.h"
 
 #include <iostream>
 
@@ -30,6 +31,8 @@ PxPvd* gPvd = NULL;
 PxDefaultCpuDispatcher* gDispatcher = NULL;
 PxScene* gScene = NULL;
 ContactReportCallback gContactReportCallback;
+
+Particle* part;
 
 
 // Initialize physics engine
@@ -69,6 +72,7 @@ void initPhysics(bool interactive)
 	RenderItem* eje3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
+	part = new Particle(Vector3D(0, 0, 0), Vector3D(-10, 0, -10), Vector3D(-1, 0, 0), 0.999);
 }
 
 
@@ -80,6 +84,8 @@ void stepPhysics(bool interactive, double t)
 	PX_UNUSED(interactive);
 
 	gScene->simulate(t);
+
+	part->integ(t);
 
 	gScene->fetchResults(true);
 }
@@ -100,6 +106,7 @@ void cleanupPhysics(bool interactive)
 	transport->release();
 
 	gFoundation->release();
+	delete part;
 }
 
 // Function called when a key is pressed
