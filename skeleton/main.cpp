@@ -62,11 +62,11 @@ void initPhysics(bool interactive)
 
 	RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(centre.getX(), centre.getY(), centre.getZ()), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-	RenderItem* render_Item1 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+	RenderItem* eje1 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(-x.getX() * 10, -y.getY() * 10, centre.getZ()), Vector4(0.0f, 0.0f, 1.0f, 1.0f));
-	RenderItem* render_Item2 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+	RenderItem* eje2 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(x.getX() * 10, centre.getY() * 10, centre.getZ()), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
-	RenderItem* render_Item3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+	RenderItem* eje3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
 }
