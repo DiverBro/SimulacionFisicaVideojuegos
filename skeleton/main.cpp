@@ -6,8 +6,6 @@
 
 #include "core.hpp"
 #include "Vector3D.h"
-#include "Particle.h"
-#include "Proyectil.h"
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
 
@@ -32,8 +30,6 @@ PxPvd* gPvd = NULL;
 PxDefaultCpuDispatcher* gDispatcher = NULL;
 PxScene* gScene = NULL;
 ContactReportCallback gContactReportCallback;
-Particle* part;
-Proyectil* pr;
 
 
 // Initialize physics engine
@@ -84,9 +80,6 @@ void stepPhysics(bool interactive, double t)
 	PX_UNUSED(interactive);
 
 	gScene->simulate(t);
-	if (pr != nullptr) {
-		pr->integ(t);
-	}
 
 	gScene->fetchResults(true);
 }
@@ -107,7 +100,6 @@ void cleanupPhysics(bool interactive)
 	transport->release();
 
 	gFoundation->release();
-	delete part;
 }
 
 // Function called when a key is pressed
@@ -117,10 +109,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 	switch (toupper(key))
 	{
-	case 'p':
 	case ' ':
 	{
-		pr = new Proyectil(Vector3(GetCamera()->getTransform().p), Vector3(GetCamera()->getDir()), 1800.0f, 5.0f, 10.0f);
 		break;
 	}
 	default:
