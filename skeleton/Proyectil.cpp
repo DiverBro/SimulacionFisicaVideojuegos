@@ -12,7 +12,7 @@ float Proyectil::masaSim(float mReal, float velSim, float velReal)
 {
 	return (mReal * pow(velReal, 2)) / pow(velSim, 2);
 }
-
+//ESCALADO DE MASA Y DE GRAVEDAD
 Vector3D Proyectil::gravSim(float grav, float velSim, float velReal)
 {
 	return Vector3D(0, (grav * pow(velSim, 2)) / pow(velReal, 2), 0);

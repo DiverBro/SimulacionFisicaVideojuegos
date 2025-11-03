@@ -9,6 +9,19 @@ ace(ace), dumping(dumping), masa(masa), grav(grav), tiempo(tiempo)
 
 void Particle::integ(double t)
 {
-	vel = vel * pow(dumping, t) + ((ace + grav) * t);
-	pose.p += Vector3(vel.getX(), vel.getY(), vel.getZ()) * t;
+    Vector3D totalAcc = (forceAcum / masa) + grav + ace;
+    vel = vel * pow(dumping, t) + totalAcc * t;
+    pose.p += Vector3(vel.getX(), vel.getY(), vel.getZ()) * t;
+
+    clearForces();
+}
+
+//GESTION DE FUERZAS TENIENDO EN CUENTA LA MASA
+void Particle::addForce(Vector3D force, double t)
+{
+    forceAcum = forceAcum + force;
+}
+
+void Particle:: clearForces() {
+	forceAcum = Vector3D(0, 0, 0);
 }

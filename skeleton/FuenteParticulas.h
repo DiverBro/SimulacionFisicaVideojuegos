@@ -11,6 +11,7 @@ public:
 
 	//GENERADOR DE MANGUERA
 	Particle* generaParticulaManguera() {
+		//DISTRIBUCION NORMAL
 		std::normal_distribution<double> dir(0.5, 0.5);
 		Vector3D direccion = Vector3D(dir(gen), dir(gen), dir(gen));
 		std::normal_distribution<double> velX(4, 3);
@@ -21,6 +22,7 @@ public:
 
 	//GENERADO DE NIEBLA
 	Particle* generaParticulaNiebla() {
+		//DISTRIBUCION NORMAL
 		std::normal_distribution<double> posX(10, 2);
 		std::normal_distribution<double> posY(30, 2);
 		std::normal_distribution<double> posZ(10, 2);
@@ -33,6 +35,7 @@ public:
 
 	//GENERADOR DE HUMO
 	Particle* generaParticulaHumo() {
+		//DISTRIBUCION NORMAL
 		std::normal_distribution<double> velX(1, 0.3);
 		std::normal_distribution<double> velY(6, 1);
 		std::normal_distribution<double> velZ(1, 0.3);

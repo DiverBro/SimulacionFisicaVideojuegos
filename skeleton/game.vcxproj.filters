@@ -14,6 +14,7 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Proyectil.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="Mapa.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -30,6 +31,8 @@
     <ClInclude Include="Proyectil.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="FuenteParticulas.h" />
+    <ClInclude Include="ForceGenerator.h" />
+    <ClInclude Include="Mapa.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">
