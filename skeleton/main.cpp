@@ -78,7 +78,6 @@ void initPhysics(bool interactive)
 		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));*/
 
 		//part = new Particle(Vector3D(0, 0, 0), Vector3D(-10, 0, -10), Vector3D(-1, 0, 0), 0.999);
-	pS = new ParticleSystem(1);
 }
 
 
@@ -95,7 +94,8 @@ void stepPhysics(bool interactive, double t)
 		p->integ(t);
 	}
 
-	pS->update(t);
+	if (pS)
+		pS->update(t);
 
 
 	gScene->fetchResults(true);
@@ -142,6 +142,18 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case'L': {//BALA DE CAÑON
 		pr.push_back(new Proyectil(GetCamera()->getTransform().p, GetCamera()->getDir(), Vector3D(0, 0, 0), 250.0f, 15.0f, 10.0f, { 0.0f, 0.0f, 1.0f, 1.0f }));
 		break;
+	}
+	case 'B': {
+		pS = nullptr;
+		pS = new ParticleSystem(0);
+	}
+	case 'N': {
+		pS = nullptr;
+		pS = new ParticleSystem(1);
+	}
+	case 'M': {
+		pS = nullptr;
+		pS = new ParticleSystem(2);
 	}
 	default:
 		break;

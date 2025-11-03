@@ -28,7 +28,7 @@ public:
 		std::normal_distribution<double> velY(1, 1);
 		std::normal_distribution<double> velZ(1, 1);
 		return new Particle(Vector3D(posX(gen), posY(gen), posZ(gen)), Vector3D(velX(gen), velY(gen), velZ(gen)), 
-			Vector3D(0, -0.8f, 0), 0.999, 0.2f, 2.0f, 10.0f, -0.8f, { 0.5f, 0.5f, 0.5f, 0.5f });
+			Vector3D(0, 0, 0), 0.999, 0.2f, 2.0f, 10.0f, Vector3D(0, -0.8f, 0), { 0.5f, 0.5f, 0.5f, 0.5f });
 	};
 
 	//GENERADOR DE HUMO
@@ -37,7 +37,7 @@ public:
 		std::normal_distribution<double> velY(6, 1);
 		std::normal_distribution<double> velZ(1, 0.3);
 		return new Particle(Vector3D(0, 0, 0), Vector3D(velX(gen), velY(gen), velZ(gen)), 
-			Vector3D(0, -0.1, 0), 0.999, 0.4f, 8.0f, 10.0f, -0.1f, { 0.5f, 0.5f, 0.5f, 0.8f });
+			Vector3D(0, 0, 0), 0.999, 0.4f, 8.0f, 10.0f, Vector3D(0, -0.1f, 0), { 0.5f, 0.5f, 0.5f, 0.8f });
 	};
 };
 

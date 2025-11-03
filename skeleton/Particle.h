@@ -6,7 +6,7 @@
 class Particle
 {
 public:
-	Particle(Vector3D pos, Vector3D vel, Vector3D ace, float dumping, float tam = 1.0f, float tiempo = 4.0f, float masa = 10.0f, float grav = -9.8f, Vector4 col = { 1.0f, 0.0f, 0.0f, 1.0f });
+	Particle(Vector3D pos, Vector3D vel, Vector3D ace, float dumping, float tam = 1.0f, float tiempo = 4.0f, float masa = 10.0f, Vector3D grav = Vector3D(0, -9.8f, 0), Vector4 col = {1.0f, 0.0f, 0.0f, 1.0f});
 	~Particle() { DeregisterRenderItem(renderItem); renderItem = nullptr; };
 
 	virtual void integ(double t);
@@ -27,7 +27,7 @@ private:
 	RenderItem* renderItem;
 	float dumping;
 	Vector3D ace;
-	float grav;
+	Vector3D grav;
 	float masa;
 	float tiempo;
 };
