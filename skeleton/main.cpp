@@ -41,6 +41,9 @@ ParticleSystem* pS;
 Proyectil* proyectil;
 Mapa* map;
 int fuente = 0;
+float angleDeg = 45.0f;
+const float angleStep = 2.0f;
+const float speed = 25.0f;
 
 
 // Initialize physics engine
@@ -72,20 +75,21 @@ void initPhysics(bool interactive)
 	Vector3D centre(0, 0, 0);
 
 	//EJES
-	RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+	/*RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(centre.getX(), centre.getY(), centre.getZ()), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 	RenderItem* eje1 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(-x.getX() * 10, -y.getY() * 10, centre.getZ()), Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 	RenderItem* eje2 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(x.getX() * 10, centre.getY() * 10, centre.getZ()), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	RenderItem* eje3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
-		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));*/
 
-	//part = new Particle(Vector3D(0, 0, 0), Vector3D(-10, 0, -10), Vector3D(-1, 0, 0), 0.999);
+		//part = new Particle(Vector3D(0, 0, 0), Vector3D(-10, 0, -10), Vector3D(-1, 0, 0), 0.999);
 
 	proyectil = new Proyectil(Vector3D(0, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 0, 0),
 		10.0f, 10.0f, 10.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
-	map = new Mapa("mapa.txt", Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil);
+
+	map = new Mapa("mapa2.txt", Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil);
 }
 
 
@@ -140,9 +144,21 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 	switch (toupper(key))
 	{
+	case 'R':
+	{
+		angleDeg += angleStep;
+		break;
+	}
+	case 'F':
+	{
+		angleDeg -= angleStep;
+		break;
+	}
 	case ' ':
 	{
-		proyectil->setVel(Vector3D(0, 23, 0));
+		float angleRad = angleDeg * 3.14159265f / 180.0f;
+		Vector3D vel(speed * cos(angleRad), speed * sin(angleRad), 0.0f);
+		proyectil->setVel(vel);
 		break;
 	}
 	//PARTICULAS DEFINIDAS CON DISTINTA MASA + TIPOS DE BALAS

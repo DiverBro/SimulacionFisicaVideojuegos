@@ -35,7 +35,7 @@ public:
 		}
 		part.clear();
 	};
-	void update(double t, int p, Vector3D pos);
+	void update(double t, int p, Vector3D pos, bool force = true);
 	void addForce(Particle* p, double t);
 	void forceVertex(ForceGenerator* f);
 	void clearForceVertex();

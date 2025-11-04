@@ -21,6 +21,15 @@ public:
 	double getZ() {
 		return z;
 	};
+	void setX(double nx) {
+		x = nx;
+	};
+	void setY(double ny) {
+		y = ny;
+	};
+	void setZ(double nz) {
+		z = nz;
+	};
 
 	Vector3D operator*(double n) {
 		return Vector3D(this->x * n, this->y * n, this->z * n);

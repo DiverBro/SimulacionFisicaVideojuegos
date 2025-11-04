@@ -1,5 +1,6 @@
 #include "Mapa.h"
 #include <iostream>
+#include <algorithm>
 using namespace physx;
 Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, Proyectil* pr) : proyectil(pr)
 {
@@ -7,8 +8,8 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 	std::ifstream file(filename);
 	if (!file.is_open()) return;
 
-	int width, height;
-	file >> width >> height;
+	int width, height, velWindX, velWindY;
+	file >> width >> height >> velWindX >> velWindY;
 
 	std::string line;
 	std::getline(file, line); // consume el salto de línea después del height
@@ -21,13 +22,13 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 			char c = line[x];
 			Vector3D pos = startPos + Vector3D(x * blockSize.getX(), (height - 1 - y) * blockSize.getY(), 0);
 
-			if (c == 'x') // bloque sólido
+			if (c == 'x')
 				objetos.push_back(new RenderItem(
 					CreateShape(PxBoxGeometry(blockSize.getX() * 0.5f, blockSize.getY() * 0.5f, blockSize.getZ() * 0.5f)),
 					new PxTransform(pos.getX(), pos.getY(), pos.getZ()),
 					Vector4(1.0f, 0.0f, 0.0f, 1.0f)
 				));
-			else if (c == 'm') // bloque sólido
+			else if (c == 'm')
 			{
 				objetos.push_back(new RenderItem(
 					CreateShape(PxBoxGeometry(blockSize.getX() * 0.5f, blockSize.getY() * 0.5f, blockSize.getZ() * 0.5f)),
@@ -42,21 +43,74 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 				pr->setPose(PxVec3(pos.getX(), pos.getY(), pos.getZ()));
 				posIniPr = pos;
 			}
-			else if (c == 'V') // otro tipo de bloque
+			else if (c == 'V')
 			{
-				Vector3D vel = Vector3D(65, 0, 0);
+				PxBoxGeometry geom(blockSize.getX() * (width / 2) * 0.5f, blockSize.getY() * 0.5f, blockSize.getZ() * 0.5f);
+
+				Vector3D vel(velWindX, velWindY, 0);
 				partSys->forceVertex(new ForceGenerator(vel, 1, 0));
-				if (vel.getX() < 0)
-					partSys->changeArea(Vector3D(pos.getX() - blockSize.getX() * width, pos.getY() - blockSize.getY(), pos.getZ() - blockSize.getZ()),
-						Vector3D(pos.getX(), pos.getY() + blockSize.getY(), pos.getZ() + blockSize.getZ()));
+
+				Vector3D dir = vel;
+				float len = sqrt(dir.getX() * dir.getX() + dir.getY() * dir.getY());
+				if (len > 0.001f)
+					dir = Vector3D(dir.getX() / len, dir.getY() / len, 0);
 				else
-					partSys->changeArea(Vector3D(pos.getX(), pos.getY() - blockSize.getY(), pos.getZ() - blockSize.getZ()), Vector3D(pos.getX() + blockSize.getX() * width, pos.getY() + blockSize.getY(), pos.getZ() + blockSize.getZ()));
+					dir = Vector3D(1, 0, 0);
+
+				PxVec3 from(1, 0, 0);
+				PxVec3 to(dir.getX(), dir.getY(), 0);
+				PxQuat rot = PxShortestRotation(from, to);
+
+				float longitud = blockSize.getX() * (width / 2);
+				PxVec3 centro(pos.getX(), pos.getY(), pos.getZ());
+
+				const float tol = 0.01f;
+
+				// Ajuste del centro según dirección y signo
+				if (fabs(dir.getY()) < tol) // horizontal
+				{
+					if (velWindX > 0) centro += PxVec3(dir.getX() * (longitud * 0.5f) - blockSize.getX() * 0.5f, 0, 0);
+					else centro += PxVec3(dir.getX() * (longitud * 0.5f) + blockSize.getX() * 0.5f, 0, 0);
+				}
+				else if (fabs(dir.getX()) < tol) // vertical
+				{
+					if (velWindY > 0) centro += PxVec3(0, dir.getY() * (longitud * 0.5f) - blockSize.getY() * 0.5f, 0);
+					else centro += PxVec3(0, dir.getY() * (longitud * 0.5f) + blockSize.getY() * 0.5f, 0);
+				}
+				else // diagonal
+				{
+					if (velWindX > 0 && velWindY < 0) centro += PxVec3(dir.getX() * (longitud * 0.5f) - blockSize.getX() * 0.5f, dir.getY() * (longitud * 0.5f) + blockSize.getY() * 0.5f, 0); // derecha-abajo
+					else if (velWindX < 0 && velWindY < 0) centro += PxVec3(dir.getX() * (longitud * 0.5f) + blockSize.getX() * 0.5f, dir.getY() * (longitud * 0.5f) + blockSize.getY() * 0.5f, 0); // izquierda-abajo
+					else if (velWindX > 0 && velWindY > 0) centro += PxVec3(dir.getX() * (longitud * 0.5f) - blockSize.getX() * 0.5f, dir.getY() * (longitud * 0.5f) - blockSize.getY() * 0.5f, 0); // derecha-arriba
+					else if (velWindX < 0 && velWindY > 0) centro += PxVec3(dir.getX() * (longitud * 0.5f) + blockSize.getX() * 0.5f, dir.getY() * (longitud * 0.5f) - blockSize.getY() * 0.5f, 0); // izquierda-arriba
+				}
+
+				objetos.push_back(new RenderItem(
+					CreateShape(geom),
+					new PxTransform(centro, rot),
+					Vector4(0.0f, 0.0f, 1.0f, 0.5f)
+				));
+
+				Vector3D dirArea = vel.Normalize();
+				Vector3D p1 = pos;
+				Vector3D p2 = pos + dirArea * longitud;
+
+				p1.setY(p1.getY() - blockSize.getY());
+				p2.setY(p2.getY() + blockSize.getY());
+				p1.setZ(p1.getZ() - blockSize.getZ());
+				p2.setZ(p2.getZ() + blockSize.getZ());
+
+				float minX = (p1.getX() < p2.getX()) ? p1.getX() : p2.getX();
+				float minY = (p1.getY() < p2.getY()) ? p1.getY() : p2.getY();
+				float minZ = (p1.getZ() < p2.getZ()) ? p1.getZ() : p2.getZ();
+				float maxX = (p1.getX() > p2.getX()) ? p1.getX() : p2.getX();
+				float maxY = (p1.getY() > p2.getY()) ? p1.getY() : p2.getY();
+				float maxZ = (p1.getZ() > p2.getZ()) ? p1.getZ() : p2.getZ();
+
+				partSys->changeArea(Vector3D(minX, minY, minZ), Vector3D(maxX, maxY, maxZ));
 			}
 		}
 	}
-
-	for (RenderItem* rI : objetos)
-		RegisterRenderItem(rI);
 }
 
 void Mapa::update(double t)
@@ -70,8 +124,8 @@ void Mapa::update(double t)
 	if (victoria)
 	{
 		tiempo += t;
-		partSys->update(t, 2, Vector3D(10, 0, -5));
-		partSys->update(t, 2, Vector3D(35, 0, -5));
+		partSys->update(t, 2, Vector3D(10, 0, -5), false);
+		partSys->update(t, 2, Vector3D(35, 0, -5), false);
 		if (tiempo >= 6)
 		{
 			victoria = false;

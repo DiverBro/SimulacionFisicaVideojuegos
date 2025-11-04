@@ -22,7 +22,10 @@ public:                                                                         
 	void setTiempo(float t) { tiempo = t; };
 	void addForce(Vector3D force, double t);
 	void clearForces();
+	void setForceAffects(bool f) { forceAffects = f; };
+	bool getForceAffects() { return forceAffects; };
 private:
+	bool forceAffects;
 	Vector3D vel;
 	physx::PxTransform pose;
 	RenderItem* renderItem;
