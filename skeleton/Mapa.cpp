@@ -3,7 +3,7 @@
 using namespace physx;
 Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, Proyectil* pr) : proyectil(pr)
 {
-	partSys = new ParticleSystem(-1);
+	partSys = new ParticleSystem();
 	std::ifstream file(filename);
 	if (!file.is_open()) return;
 
@@ -44,9 +44,13 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 			}
 			else if (c == 'V') // otro tipo de bloque
 			{
-				partSys->forceVertex(new ForceGenerator(Vector3D(-100, 0, 0), 1, 0));
-				partSys->changeArea(Vector3D(pos.getX() - blockSize.getX() * width, pos.getY() - blockSize.getY(), pos.getZ() - blockSize.getZ()),
-					Vector3D(pos.getX(), pos.getY() + blockSize.getY(), pos.getZ() + blockSize.getZ()));
+				Vector3D vel = Vector3D(65, 0, 0);
+				partSys->forceVertex(new ForceGenerator(vel, 1, 0));
+				if (vel.getX() < 0)
+					partSys->changeArea(Vector3D(pos.getX() - blockSize.getX() * width, pos.getY() - blockSize.getY(), pos.getZ() - blockSize.getZ()),
+						Vector3D(pos.getX(), pos.getY() + blockSize.getY(), pos.getZ() + blockSize.getZ()));
+				else
+					partSys->changeArea(Vector3D(pos.getX(), pos.getY() - blockSize.getY(), pos.getZ() - blockSize.getZ()), Vector3D(pos.getX() + blockSize.getX() * width, pos.getY() + blockSize.getY(), pos.getZ() + blockSize.getZ()));
 			}
 		}
 	}
@@ -61,6 +65,19 @@ void Mapa::update(double t)
 		&& proyectil->getPose().y >= metaYBegin && proyectil->getPose().y <= metaYEnd) {
 		proyectil->setVel(Vector3D(0, 0, 0));
 		proyectil->setPose(PxVec3(posIniPr.getX(), posIniPr.getY(), posIniPr.getZ()));
+		victoria = true;
+	}
+	if (victoria)
+	{
+		tiempo += t;
+		partSys->update(t, 2, Vector3D(10, 0, -5));
+		partSys->update(t, 2, Vector3D(35, 0, -5));
+		if (tiempo >= 6)
+		{
+			victoria = false;
+			tiempo = 0;
+			partSys->clearParticles();
+		}
 	}
 	partSys->addForce(proyectil, t);
 }

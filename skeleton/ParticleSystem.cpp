@@ -1,12 +1,17 @@
 #include "ParticleSystem.h"
 #include <iostream>
 
-void ParticleSystem::update(double t)
+void ParticleSystem::update(double t, int p, Vector3D pos)
 {
+	switch (p) {
+	case 0: { ty = MANGUERA;break; }
+	case 1: { ty = NIEBLA;break; }
+	case 2: { ty = HUMO;break; }
+	}
 	switch (ty) {
 	case MANGUERA: part.push_back(fP->generaParticulaManguera()); break;
 	case NIEBLA:   part.push_back(fP->generaParticulaNiebla()); break;
-	case HUMO:     part.push_back(fP->generaParticulaHumo()); break;
+	case HUMO:     part.push_back(fP->generaParticulaHumo(pos)); break;
 	}
 	for (Particle* p : part) {
 		addForce(p, t);

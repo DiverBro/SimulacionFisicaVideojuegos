@@ -19,14 +19,9 @@ private:
 	Vector3D areaMin = Vector3D(-20, -20, -20);
 	Vector3D areaMax = Vector3D(20, 25, 20);
 public:
-	ParticleSystem(int t) {
+	ParticleSystem() {
 		//GESTIONA CONJUNTO DE PARTICULAS
 		fP = new FuenteParticulas();
-		switch (t) {
-		case 0: { ty = MANGUERA;break; }
-		case 1: { ty = NIEBLA;break; }
-		case 2: { ty = HUMO;break; }
-		}
 	};
 	~ParticleSystem() {
 		for (Particle* p : part) {
@@ -34,7 +29,13 @@ public:
 		}
 		part.clear();
 	};
-	void update(double t);
+	void clearParticles() {
+		for (Particle* p : part) {
+			delete p;
+		}
+		part.clear();
+	};
+	void update(double t, int p, Vector3D pos);
 	void addForce(Particle* p, double t);
 	void forceVertex(ForceGenerator* f);
 	void clearForceVertex();

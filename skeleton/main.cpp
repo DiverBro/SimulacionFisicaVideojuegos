@@ -40,6 +40,7 @@ vector<Proyectil*> pr;
 ParticleSystem* pS;
 Proyectil* proyectil;
 Mapa* map;
+int fuente = 0;
 
 
 // Initialize physics engine
@@ -105,7 +106,7 @@ void stepPhysics(bool interactive, double t)
 		if (proyectil->getVel().getX() != 0 || proyectil->getVel().getY() != 0)
 			proyectil->integ(t);
 	if (pS)
-		pS->update(t);
+		pS->update(t, fuente, Vector3D(0, 0, 0));
 
 	if (map)
 		map->update(t);
@@ -141,7 +142,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	{
 	case ' ':
 	{
-		proyectil->setVel(Vector3D(7, 23, 0));
+		proyectil->setVel(Vector3D(0, 23, 0));
 		break;
 	}
 	//PARTICULAS DEFINIDAS CON DISTINTA MASA + TIPOS DE BALAS
@@ -159,17 +160,20 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	}
 	case 'B': {
 		delete pS;
-		pS = new ParticleSystem(0);
+		pS = new ParticleSystem();
+		fuente = 0;
 		break;
 	}
 	case 'N': {
 		delete pS;
-		pS = new ParticleSystem(1);
+		pS = new ParticleSystem();
+		fuente = 1;
 		break;
 	}
 	case 'M': {
 		delete pS;
-		pS = new ParticleSystem(2);
+		pS = new ParticleSystem();
+		fuente = 2;
 		break;
 	}
 	case 'U': {
