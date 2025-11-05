@@ -15,7 +15,7 @@ void ExplosionGenerator::resetExplosion()
 
 void ExplosionGenerator::applyForce(class Particle* p, float t)
 {
-	if (!p) return;
+	if (!p || !p->expAffects()) return;
 
 	Vector3D pos = p->getPose();
 	Vector3D diff = pos - mCenter;

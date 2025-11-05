@@ -1,7 +1,7 @@
 #include "ParticleSystem.h"
 #include <iostream>
 
-void ParticleSystem::update(double t, int p, Vector3D pos, bool forceWillAffect)
+void ParticleSystem::update(double t, int p, Vector3D pos, bool windWillAffect, bool expWillAffect)
 {
 	switch (p) {
 	case 0: { ty = MANGUERA;break; }
@@ -9,15 +9,12 @@ void ParticleSystem::update(double t, int p, Vector3D pos, bool forceWillAffect)
 	case 2: { ty = HUMO;break; }
 	}
 	switch (ty) {
-	case MANGUERA: part.push_back(fP->generaParticulaManguera(forceWillAffect)); break;
-	case NIEBLA:   part.push_back(fP->generaParticulaNiebla(forceWillAffect)); break;
-	case HUMO:     part.push_back(fP->generaParticulaHumo(pos, forceWillAffect)); break;
+	case MANGUERA: part.push_back(fP->generaParticulaManguera(windWillAffect, expWillAffect)); break;
+	case NIEBLA:   part.push_back(fP->generaParticulaNiebla(windWillAffect, expWillAffect)); break;
+	case HUMO:     part.push_back(fP->generaParticulaHumo(pos, windWillAffect, expWillAffect)); break;
 	}
 	for (Particle* p : part) {
-		if (p->getForceAffects())
-		{
-			addForce(p, t);
-		}
+		addForce(p, t);
 		p->integ(t);
 		p->setTiempo(p->getTiempo() - t);
 		if (p->getTiempo() <= 0) {

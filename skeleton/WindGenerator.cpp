@@ -6,7 +6,7 @@ WindGenerator::WindGenerator(Vector3D windVelocity, float k1, float k2)
 // Aplica fuerza a cada particula por separado
 void WindGenerator::applyForce(class Particle* p, float t)
 {
-	if (!p) return;
+	if (!p || !p->windAffects()) return;
 
 	Vector3D relVel = mWindVelocity - p->getVel();
 	Vector3D force = relVel * mK1;
