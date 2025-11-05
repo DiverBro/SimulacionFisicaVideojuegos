@@ -40,9 +40,9 @@ public:
 	//GENERADOR DE HUMO
 	Particle* generaParticulaHumo(Vector3D pos = Vector3D(0, 0, 0), bool forceWillAffect = true) {
 		//DISTRIBUCION NORMAL
-		std::normal_distribution<double> velX(1, 0.3);
+		std::normal_distribution<double> velX(0, 0.3);
 		std::normal_distribution<double> velY(6, 1);
-		std::normal_distribution<double> velZ(1, 0.3);
+		std::normal_distribution<double> velZ(0, 0.3);
 		Particle* p = new Particle(pos, Vector3D(velX(gen), velY(gen), velZ(gen)),
 			Vector3D(0, 0, 0), 0.999, 0.4f, 8.0f, 10.0f, Vector3D(0, -0.1f, 0), { 0.5f, 0.5f, 0.5f, 0.8f });
 		p->setForceAffects(forceWillAffect);

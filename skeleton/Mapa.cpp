@@ -35,13 +35,16 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 					new PxTransform(pos.getX(), pos.getY(), pos.getZ()),
 					Vector4(0.0f, 1.0f, 0.0f, 1.0f)
 				));
-				metaXBegin = pos.getX(); metaXEnd = pos.getX() + blockSize.getX();
-				metaYBegin = pos.getY(); metaYEnd = pos.getY() + blockSize.getY();
+				metaXBegin = pos.getX() - blockSize.getX() / 2; metaXEnd = pos.getX() + blockSize.getX() / 2;
+				metaYBegin = pos.getY() - blockSize.getX() / 2; metaYEnd = pos.getY() + blockSize.getY() / 2;
 			}
 			else if (c == 'b') // otro tipo de bloque
 			{
 				pr->setPose(PxVec3(pos.getX(), pos.getY(), pos.getZ()));
 				posIniPr = pos;
+				arrow = new RenderItem(CreateShape(PxBoxGeometry(0.5f, 0.2f, 0.2f)),
+					new PxTransform(pos.getX(), pos.getY(), pos.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+				initialArrowPos = arrow->transform->p;
 			}
 			else if (c == 'V')
 			{
@@ -95,10 +98,10 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 				Vector3D p1 = pos;
 				Vector3D p2 = pos + dirArea * longitud;
 
-				p1.setY(p1.getY() - blockSize.getY());
-				p2.setY(p2.getY() + blockSize.getY());
-				p1.setZ(p1.getZ() - blockSize.getZ());
-				p2.setZ(p2.getZ() + blockSize.getZ());
+				p1.setY(p1.getY() - blockSize.getY() / 2);
+				p2.setY(p2.getY() + blockSize.getY() / 2);
+				p1.setZ(p1.getZ() - blockSize.getZ() / 2);
+				p2.setZ(p2.getZ() + blockSize.getZ() / 2);
 
 				float minX = (p1.getX() < p2.getX()) ? p1.getX() : p2.getX();
 				float minY = (p1.getY() < p2.getY()) ? p1.getY() : p2.getY();
@@ -113,7 +116,7 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 	}
 }
 
-void Mapa::update(double t)
+void Mapa::update(double t, float angle)
 {
 	if (proyectil->getPose().x >= metaXBegin && proyectil->getPose().x <= metaXEnd
 		&& proyectil->getPose().y >= metaYBegin && proyectil->getPose().y <= metaYEnd) {
@@ -132,6 +135,20 @@ void Mapa::update(double t)
 			tiempo = 0;
 			partSys->clearParticles();
 		}
+	}
+
+	if (arrow) {
+		float angleRad = angle * PxPi / 180.0f;
+
+		// Vector frente en el plano XY (rotando sobre Z)
+		PxVec3 forward(cosf(angleRad), sinf(angleRad), 0.0f);
+
+		float distancia = 2.5f;
+
+		PxTransform newTransform(initialArrowPos + forward * distancia, PxQuat(angleRad, PxVec3(0.0f, 0.0f, 1.0f))   );
+
+		if (arrow->transform) delete arrow->transform;
+		arrow->transform = new PxTransform(newTransform);
 	}
 	partSys->addForce(proyectil, t);
 }

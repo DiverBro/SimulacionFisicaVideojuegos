@@ -41,7 +41,7 @@ ParticleSystem* pS;
 Proyectil* proyectil;
 Mapa* map;
 int fuente = 0;
-float angleDeg = 45.0f;
+float angleDeg = 0.0f;
 const float angleStep = 2.0f;
 const float speed = 25.0f;
 
@@ -88,8 +88,7 @@ void initPhysics(bool interactive)
 
 	proyectil = new Proyectil(Vector3D(0, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 0, 0),
 		10.0f, 10.0f, 10.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
-
-	map = new Mapa("mapa2.txt", Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil);
+	map = new Mapa("mapa1.txt", Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil);
 }
 
 
@@ -113,7 +112,7 @@ void stepPhysics(bool interactive, double t)
 		pS->update(t, fuente, Vector3D(0, 0, 0));
 
 	if (map)
-		map->update(t);
+		map->update(t, angleDeg);
 
 	gScene->fetchResults(true);
 }
@@ -156,9 +155,13 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	}
 	case ' ':
 	{
-		float angleRad = angleDeg * 3.14159265f / 180.0f;
-		Vector3D vel(speed * cos(angleRad), speed * sin(angleRad), 0.0f);
-		proyectil->setVel(vel);
+		if (proyectil->getVel().getX() == 0 && proyectil->getVel().getY() == 0)
+		{
+			float angleRad = angleDeg * 3.14159265f / 180.0f;
+			Vector3D vel(speed * cos(angleRad), speed * sin(angleRad), 0.0f);
+			proyectil->setVel(vel);
+			angleDeg = 0;
+		}
 		break;
 	}
 	//PARTICULAS DEFINIDAS CON DISTINTA MASA + TIPOS DE BALAS

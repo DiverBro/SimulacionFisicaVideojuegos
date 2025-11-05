@@ -20,8 +20,10 @@ private:
 	Vector3D posIniPr = Vector3D(0, 0, 0);
 	bool victoria = false;
 	double tiempo = 0;
+	RenderItem* arrow;
+	physx::PxVec3 initialArrowPos;
 public:
 	Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, Proyectil* pr);
-	void update(double t);
+	void update(double t, float angle);
 };
 
