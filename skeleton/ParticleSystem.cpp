@@ -25,6 +25,19 @@ void ParticleSystem::update(double t, int p, Vector3D pos, bool forceWillAffect)
 			delete p;
 		}
 	}
+
+	if (explosion) {
+		explosion->updateTime(t);
+		if (explosion->getTime() >= explosion->getTau()) {
+			explosion->resetExplosion();
+			auto it = std::find(forces.begin(), forces.end(), explosion);
+			if (it != forces.end()) {
+				delete* it;
+				forces.erase(it);
+			}
+			explosion = nullptr;
+		}
+	}
 }
 
 void ParticleSystem::addForce(Particle* p, double t)
@@ -39,8 +52,16 @@ void ParticleSystem::addForce(Particle* p, double t)
 	}
 }
 
-void ParticleSystem::forceVertex(ForceGenerator* f)
+void ParticleSystem::forceVertex(std::string tipo, Vector3D pos, Vector3D vel, float intensity, float rad, float time)
 {
+	ForceGenerator* f;
+	if (tipo == "explosion") {
+		explosion = new ExplosionGenerator(pos, intensity, rad, time);
+		f = explosion;
+	}
+	else if (tipo == "wind") {
+		f = new WindGenerator(vel, 1, 0);
+	}
 	forces.push_back(f);
 }
 

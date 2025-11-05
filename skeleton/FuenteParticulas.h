@@ -12,11 +12,11 @@ public:
 	//GENERADOR DE MANGUERA
 	Particle* generaParticulaManguera(bool forceWillAffect = true) {
 		//DISTRIBUCION NORMAL
-		std::normal_distribution<double> dir(0.5, 0.5);
+		std::uniform_real_distribution<double> dir(0, 1);
 		Vector3D direccion = Vector3D(dir(gen), dir(gen), dir(gen));
-		std::normal_distribution<double> velX(4, 3);
-		std::normal_distribution<double> velY(15, 5);
-		std::normal_distribution<double> velZ(4, 3);
+		std::uniform_real_distribution<double> velX(1, 7);
+		std::uniform_real_distribution<double> velY(10, 20);
+		std::uniform_real_distribution<double> velZ(1, 7);
 		Particle* p = new Particle(Vector3D(0, 0, 0), Vector3D(direccion.getX() * velX(gen), direccion.getY() * velY(gen), direccion.getZ() * velZ(gen)), Vector3D(0, -9.8, 0), 0.999);
 		p->setForceAffects(forceWillAffect);
 		return p;

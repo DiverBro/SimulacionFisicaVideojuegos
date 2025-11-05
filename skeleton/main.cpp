@@ -11,6 +11,8 @@
 #include "Proyectil.h"
 #include "ParticleSystem.h"
 #include "Mapa.h"
+#include "WindGenerator.h"
+#include "ExplosionGenerator.h"
 
 #include <iostream>
 
@@ -75,20 +77,20 @@ void initPhysics(bool interactive)
 	Vector3D centre(0, 0, 0);
 
 	//EJES
-	/*RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+	RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(centre.getX(), centre.getY(), centre.getZ()), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 	RenderItem* eje1 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(-x.getX() * 10, -y.getY() * 10, centre.getZ()), Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 	RenderItem* eje2 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(x.getX() * 10, centre.getY() * 10, centre.getZ()), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	RenderItem* eje3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
-		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));*/
+		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
-		//part = new Particle(Vector3D(0, 0, 0), Vector3D(-10, 0, -10), Vector3D(-1, 0, 0), 0.999);
+	//part = new Particle(Vector3D(0, 0, 0), Vector3D(-10, 0, -10), Vector3D(-1, 0, 0), 0.999);
 
-	proyectil = new Proyectil(Vector3D(0, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 0, 0),
-		10.0f, 10.0f, 10.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
-	map = new Mapa("mapa1.txt", Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil);
+/*proyectil = new Proyectil(Vector3D(0, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 0, 0),
+	10.0f, 10.0f, 10.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
+map = new Mapa("mapa1.txt", Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil);*/
 }
 
 
@@ -155,13 +157,14 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	}
 	case ' ':
 	{
-		if (proyectil->getVel().getX() == 0 && proyectil->getVel().getY() == 0)
-		{
-			float angleRad = angleDeg * 3.14159265f / 180.0f;
-			Vector3D vel(speed * cos(angleRad), speed * sin(angleRad), 0.0f);
-			proyectil->setVel(vel);
-			angleDeg = 0;
-		}
+		if (proyectil)
+			if (proyectil->getVel().getX() == 0 && proyectil->getVel().getY() == 0)
+			{
+				float angleRad = angleDeg * 3.14159265f / 180.0f;
+				Vector3D vel(speed * cos(angleRad), speed * sin(angleRad), 0.0f);
+				proyectil->setVel(vel);
+				angleDeg = 0;
+			}
 		break;
 	}
 	//PARTICULAS DEFINIDAS CON DISTINTA MASA + TIPOS DE BALAS
@@ -197,12 +200,17 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	}
 	case 'U': {
 		if (pS)
-			pS->forceVertex(new ForceGenerator(Vector3D(20, 0, -20), 1, 0));
+			pS->forceVertex("wind", Vector3D(0, 0, 0), Vector3D(20, 0, -20));
 		break;
 	}
 	case 'I': {
 		if (pS)
-			pS->forceVertex(new ForceGenerator(Vector3D(-20, 0, 20), 1, 0));
+			pS->forceVertex("wind", Vector3D(0, 0, 0), Vector3D(-20, 0, 20));
+		break;
+	}
+	case 'Z': {
+		if (pS)
+			pS->forceVertex("explosion", Vector3D(0, 10, 0), Vector3D(0, 0, 0));
 		break;
 	}
 	case 'P': {

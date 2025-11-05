@@ -51,7 +51,7 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 				PxBoxGeometry geom(blockSize.getX() * (width / 2) * 0.5f, blockSize.getY() * 0.5f, blockSize.getZ() * 0.5f);
 
 				Vector3D vel(velWindX, velWindY, 0);
-				partSys->forceVertex(new ForceGenerator(vel, 1, 0));
+				partSys->forceVertex("wind", Vector3D(0, 0, 0), vel);
 
 				Vector3D dir = vel;
 				float len = sqrt(dir.getX() * dir.getX() + dir.getY() * dir.getY());

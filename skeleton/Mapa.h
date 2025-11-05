@@ -5,6 +5,7 @@
 #include "Vector3D.h"
 #include "Proyectil.h"
 #include "ParticleSystem.h"
+#include "WindGenerator.h"
 #include <PxPhysicsAPI.h>
 #include "RenderUtils.hpp"
 class Mapa
