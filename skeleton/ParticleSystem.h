@@ -11,7 +11,8 @@ private:
 	enum type {
 		MANGUERA,
 		NIEBLA,
-		HUMO
+		HUMO,
+		ANIM
 	};
 	type ty;
 	FuenteParticulas* fP;

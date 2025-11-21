@@ -23,6 +23,7 @@ private:
 	double tiempo = 0;
 	RenderItem* arrow;
 	physx::PxVec3 initialArrowPos;
+	Vector3D posViento = Vector3(-1, -1, -1);
 public:
 	Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, Proyectil* pr);
 	void update(double t, float angle);

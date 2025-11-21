@@ -4,14 +4,16 @@
 void ParticleSystem::update(double t, int p, Vector3D pos, bool windWillAffect, bool expWillAffect)
 {
 	switch (p) {
-	case 0: { ty = MANGUERA;break; }
-	case 1: { ty = NIEBLA;break; }
-	case 2: { ty = HUMO;break; }
+	case 0: { ty = MANGUERA; break; }
+	case 1: { ty = NIEBLA; break; }
+	case 2: { ty = HUMO; break; }
+	case 3: { ty = ANIM; break; }
 	}
 	switch (ty) {
 	case MANGUERA: part.push_back(fP->generaParticulaManguera(windWillAffect, expWillAffect)); break;
 	case NIEBLA:   part.push_back(fP->generaParticulaNiebla(windWillAffect, expWillAffect)); break;
 	case HUMO:     part.push_back(fP->generaParticulaHumo(pos, windWillAffect, expWillAffect)); break;
+	case ANIM:     part.push_back(fP->generaParticulaHumo(pos, windWillAffect, expWillAffect)); break;
 	}
 	for (Particle* p : part) {
 		addForce(p, t);

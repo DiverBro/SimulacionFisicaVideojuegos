@@ -90,7 +90,7 @@ void initPhysics(bool interactive)
 
 	proyectil = new Proyectil(Vector3D(0, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 0, 0),
 		10.0f, 10.0f, 10.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
-	map = new Mapa("mapa1.txt", Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil);
+	map = new Mapa("mapa2.txt", Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil);
 }
 
 

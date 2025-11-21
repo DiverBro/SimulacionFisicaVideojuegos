@@ -51,5 +51,17 @@ public:
 		p->setExpAffects(expWillAffect);
 		return p;
 	};
+
+	//ANIM VIENTO
+	Particle* generaParticulaAnimViento(Vector3D pos = Vector3D(0, 0, 0), bool windWillAffect = true, bool expWillAffect = true) {
+		//DISTRIBUCION NORMAL
+		std::normal_distribution<double> posY(0, 20);
+
+		Particle* p = new Particle(Vector3D(pos.getX(), pos.getY() + posY(gen), pos.getZ()), Vector3D(0, 0, 0),
+			Vector3D(0, 0, 0), 0.999, 0.1f, 8.0f, 10.0f, Vector3D(0, 0, 0), { 0.0f, 0.0f, 1.0f, 0.3f });
+		p->setWindAffects(windWillAffect);
+		p->setExpAffects(expWillAffect);
+		return p;
+	};
 };
 
