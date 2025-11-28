@@ -77,20 +77,20 @@ void initPhysics(bool interactive)
 	Vector3D centre(0, 0, 0);
 
 	//EJES
-	/*RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+	RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(centre.getX(), centre.getY(), centre.getZ()), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 	RenderItem* eje1 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(-x.getX() * 10, -y.getY() * 10, centre.getZ()), Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 	RenderItem* eje2 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(x.getX() * 10, centre.getY() * 10, centre.getZ()), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	RenderItem* eje3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
-		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));*/
+		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		//part = new Particle(Vector3D(0, 0, 0), Vector3D(-10, 0, -10), Vector3D(-1, 0, 0), 0.999);
 
-	proyectil = new Proyectil(Vector3D(0, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 0, 0),
+	/*proyectil = new Proyectil(Vector3D(0, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 0, 0),
 		10.0f, 10.0f, 10.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
-	map = new Mapa("mapa2.txt", Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil);
+	map = new Mapa("mapa3.txt", Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil);*/
 }
 
 
@@ -211,6 +211,11 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'Z': {
 		if (pS)
 			pS->forceVertex("explosion", Vector3D(0, 10, 0), Vector3D(0, 0, 0));
+		break;
+	}
+	case 'X': {
+		if (pS)
+			pS->forceVertex("spring", Vector3D(0, 0, 0), Vector3D(0, 1, 0), 1, 10);
 		break;
 	}
 	case 'P': {

@@ -2,7 +2,7 @@
 #include "FuenteParticulas.h"
 #include "ExplosionGenerator.h"
 #include "WindGenerator.h"
-#include <vector>
+#include "SpringGenerator.h"
 #include <vector>
 
 class ParticleSystem
@@ -38,7 +38,7 @@ public:
 		}
 		part.clear();
 	};
-	void update(double t, int p, Vector3D pos, bool wind = true, bool exp = true);
+	void update(double t, int p, Vector3D pos, bool wind = true, bool exp = true, bool spring = true);
 	void addForce(Particle* p, double t);
 	void forceVertex(std::string tipo, Vector3D pos, Vector3D vel, float intensity = 1000.0f, float rad = 50.0f, float time = 1.5f);
 	void clearForceVertex();

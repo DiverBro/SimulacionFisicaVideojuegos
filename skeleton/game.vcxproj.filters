@@ -17,6 +17,7 @@
     <ClCompile Include="Mapa.cpp" />
     <ClCompile Include="WindGenerator.cpp" />
     <ClCompile Include="ExplosionGenerator.cpp" />
+    <ClCompile Include="SpringGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -37,6 +38,7 @@
     <ClInclude Include="Mapa.h" />
     <ClInclude Include="WindGenerator.h" />
     <ClInclude Include="ExplosionGenerator.h" />
+    <ClInclude Include="SpringGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

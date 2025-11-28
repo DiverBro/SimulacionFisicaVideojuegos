@@ -26,9 +26,12 @@ public:                                                                         
 	bool windAffects() { return wind; };
 	void setExpAffects(bool f) { exp = f; };
 	bool expAffects() { return exp; };
+	void setSpringAffects(bool f) { spring = f; };
+	bool springAffects() { return spring; };
 private:
 	bool wind;
 	bool exp;
+	bool spring;
 	Vector3D vel;
 	physx::PxTransform pose;
 	RenderItem* renderItem;

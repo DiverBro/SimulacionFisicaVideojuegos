@@ -1,6 +1,8 @@
 #pragma once
 #include "Vector3D.h"
 #include "Particle.h"
+#include <PxPhysicsAPI.h>
+#include "RenderUtils.hpp"
 #include <cmath>
 
 class ForceGenerator

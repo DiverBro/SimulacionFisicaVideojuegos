@@ -8,8 +8,8 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 	std::ifstream file(filename);
 	if (!file.is_open()) return;
 
-	int width, height, velWindX, velWindY;
-	file >> width >> height >> velWindX >> velWindY;
+	int width, height, velWindX, velWindY, expIntesnity, expRad;
+	file >> width >> height >> velWindX >> velWindY >> expIntesnity >> expRad;
 
 	std::string line;
 	std::getline(file, line); // consume el salto de línea después del height
@@ -48,51 +48,10 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 			}
 			else if (c == 'V')
 			{
-				//PxBoxGeometry geom(blockSize.getX() * (width / 2) * 0.5f, blockSize.getY() * 0.5f, blockSize.getZ() * 0.5f);
-
 				Vector3D vel(velWindX, velWindY, 0);
 				partSys->forceVertex("wind", Vector3D(0, 0, 0), vel);
 
-				//Vector3D dir = vel;
-				//float len = sqrt(dir.getX() * dir.getX() + dir.getY() * dir.getY());
-				//if (len > 0.001f)
-				//	dir = Vector3D(dir.getX() / len, dir.getY() / len, 0);
-				//else
-				//	dir = Vector3D(1, 0, 0);
-
-				//PxVec3 from(1, 0, 0);
-				//PxVec3 to(dir.getX(), dir.getY(), 0);
-				//PxQuat rot = PxShortestRotation(from, to);
-
 				float longitud = blockSize.getX() * (width / 2);
-				//PxVec3 centro(pos.getX(), pos.getY(), pos.getZ());
-
-				//const float tol = 0.01f;
-
-				//// Ajuste del centro según dirección y signo
-				//if (fabs(dir.getY()) < tol) // horizontal
-				//{
-				//	if (velWindX > 0) centro += PxVec3(dir.getX() * (longitud * 0.5f) - blockSize.getX() * 0.5f, 0, 0);
-				//	else centro += PxVec3(dir.getX() * (longitud * 0.5f) + blockSize.getX() * 0.5f, 0, 0);
-				//}
-				//else if (fabs(dir.getX()) < tol) // vertical
-				//{
-				//	if (velWindY > 0) centro += PxVec3(0, dir.getY() * (longitud * 0.5f) - blockSize.getY() * 0.5f, 0);
-				//	else centro += PxVec3(0, dir.getY() * (longitud * 0.5f) + blockSize.getY() * 0.5f, 0);
-				//}
-				//else // diagonal
-				//{
-				//	if (velWindX > 0 && velWindY < 0) centro += PxVec3(dir.getX() * (longitud * 0.5f) - blockSize.getX() * 0.5f, dir.getY() * (longitud * 0.5f) + blockSize.getY() * 0.5f, 0); // derecha-abajo
-				//	else if (velWindX < 0 && velWindY < 0) centro += PxVec3(dir.getX() * (longitud * 0.5f) + blockSize.getX() * 0.5f, dir.getY() * (longitud * 0.5f) + blockSize.getY() * 0.5f, 0); // izquierda-abajo
-				//	else if (velWindX > 0 && velWindY > 0) centro += PxVec3(dir.getX() * (longitud * 0.5f) - blockSize.getX() * 0.5f, dir.getY() * (longitud * 0.5f) - blockSize.getY() * 0.5f, 0); // derecha-arriba
-				//	else if (velWindX < 0 && velWindY > 0) centro += PxVec3(dir.getX() * (longitud * 0.5f) + blockSize.getX() * 0.5f, dir.getY() * (longitud * 0.5f) - blockSize.getY() * 0.5f, 0); // izquierda-arriba
-				//}
-
-				//objetos.push_back(new RenderItem(
-				//	CreateShape(geom),
-				//	new PxTransform(centro, rot),
-				//	Vector4(0.0f, 0.0f, 1.0f, 0.5f)
-				//));
 
 				Vector3D dirArea = vel.Normalize();
 				Vector3D p1 = pos;
@@ -113,6 +72,14 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 				partSys->changeArea(Vector3D(minX, minY, minZ), Vector3D(maxX, maxY, maxZ));
 				posViento = pos;
 			}
+			else if (c == 'E') {
+				partSys->forceVertex("explosion", pos, Vector3D(0, 0, 0), expIntesnity, expRad, -1);
+				objetos.push_back(new RenderItem(
+					CreateShape(PxSphereGeometry(expRad - 1)),
+					new PxTransform(pos.getX(), pos.getY(), pos.getZ()),
+					Vector4(1.0f, 1.0f, 0.0f, 0.1f)
+				));
+			}
 		}
 	}
 }
@@ -127,6 +94,7 @@ void Mapa::update(double t, float angle)
 	}
 	if (posViento.getX() != -1)
 		partSys->update(t, 3, posViento, true);
+
 	if (victoria)
 	{
 		tiempo += t;

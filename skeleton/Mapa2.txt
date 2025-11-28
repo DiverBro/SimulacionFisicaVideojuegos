@@ -2,6 +2,8 @@
 10
 5000
 0
+0
+0
 xxxxxxxxxx
 xoooooooox
 xoooooooox
