@@ -40,7 +40,7 @@ ContactReportCallback gContactReportCallback;
 Particle* part;
 vector<Proyectil*> pr;
 ParticleSystem* pS;
-Proyectil* proyectil;
+PxRigidDynamic* proyectil;
 Mapa* map;
 int fuente = 0;
 float angleDeg = 0.0f;
@@ -77,20 +77,28 @@ void initPhysics(bool interactive)
 	Vector3D centre(0, 0, 0);
 
 	//EJES
-	RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+	/*RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(centre.getX(), centre.getY(), centre.getZ()), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 	RenderItem* eje1 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(-x.getX() * 10, -y.getY() * 10, centre.getZ()), Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 	RenderItem* eje2 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(x.getX() * 10, centre.getY() * 10, centre.getZ()), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	RenderItem* eje3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
-		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));*/
 
 		//part = new Particle(Vector3D(0, 0, 0), Vector3D(-10, 0, -10), Vector3D(-1, 0, 0), 0.999);
 
 	/*proyectil = new Proyectil(Vector3D(0, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 0, 0),
-		10.0f, 10.0f, 10.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
-	map = new Mapa("mapa3.txt", Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil);*/
+		10.0f, 10.0f, 10.0f, { 1.0f, 1.0f, 1.0f, 1.0f });*/
+	proyectil = gPhysics->createRigidDynamic(PxTransform(0, 0, 0));
+	PxShape* shape = CreateShape(PxSphereGeometry(1));
+	proyectil->attachShape(*shape);
+	//PxRigidBodyExt::updateMassAndInertia(*cube, 0);
+	proyectil->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
+	gScene->addActor(*proyectil);
+	RenderItem* rnd = new RenderItem(shape, proyectil, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	map = new Mapa("mapa1.txt", Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil, gPhysics, gScene);
+ 
 }
 
 
@@ -107,9 +115,6 @@ void stepPhysics(bool interactive, double t)
 		p->integ(t);
 	}
 
-	if (proyectil)
-		if (proyectil->getVel().getX() != 0 || proyectil->getVel().getY() != 0)
-			proyectil->integ(t);
 	if (pS)
 		pS->update(t, fuente, Vector3D(0, 0, 0));
 
@@ -157,14 +162,26 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	}
 	case ' ':
 	{
-		if (proyectil)
-			if (proyectil->getVel().getX() == 0 && proyectil->getVel().getY() == 0)
+		if (proyectil)  // Asegurándonos de que el rigidDynamic no sea nulo
+		{
+			// Verificamos si la velocidad en X e Y es 0, como en tu código
+			if (proyectil->getLinearVelocity().x == 0 && proyectil->getLinearVelocity().y == 0)
 			{
+				// Calculamos el ángulo en radianes, como en tu código original
 				float angleRad = angleDeg * 3.14159265f / 180.0f;
-				Vector3D vel(speed * cos(angleRad), speed * sin(angleRad), 0.0f);
-				proyectil->setVel(vel);
+
+				// Calculamos la velocidad en base a la dirección (velocidad * cos/ sin)
+				PxVec3 vel(speed * cos(angleRad), speed * sin(angleRad), 0.0f);  // Usamos PxVec3 para la velocidad
+
+				proyectil->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, false);
+
+				// Asignamos la nueva velocidad al rigidDynamic
+				proyectil->setLinearVelocity(vel);
+
+				// Reiniciamos el ángulo después de disparar (igual que en tu código)
 				angleDeg = 0;
 			}
+		}
 		break;
 	}
 	//PARTICULAS DEFINIDAS CON DISTINTA MASA + TIPOS DE BALAS

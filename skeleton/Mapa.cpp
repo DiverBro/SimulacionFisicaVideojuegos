@@ -2,7 +2,7 @@
 #include <iostream>
 #include <algorithm>
 using namespace physx;
-Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, Proyectil* pr) : proyectil(pr)
+Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, PxRigidDynamic* ball, PxPhysics* gPhysics, PxScene* gScene) : proyectil(ball), gPhysics(gPhysics), gScene(gScene)
 {
 	partSys = new ParticleSystem();
 	std::ifstream file(filename);
@@ -23,11 +23,19 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 			Vector3D pos = startPos + Vector3D(x * blockSize.getX(), (height - 1 - y) * blockSize.getY(), 0);
 
 			if (c == 'x')
-				objetos.push_back(new RenderItem(
+			{
+				/*objetos.push_back(new RenderItem(
 					CreateShape(PxBoxGeometry(blockSize.getX() * 0.5f, blockSize.getY() * 0.5f, blockSize.getZ() * 0.5f)),
 					new PxTransform(pos.getX(), pos.getY(), pos.getZ()),
 					Vector4(1.0f, 0.0f, 0.0f, 1.0f)
-				));
+				));*/
+				PxRigidStatic* cube = gPhysics->createRigidStatic(PxTransform(pos.getX(), pos.getY(), pos.getZ()));
+				PxShape* shape = CreateShape(PxBoxGeometry(blockSize.getX() * 0.5f, blockSize.getY() * 0.5f, blockSize.getZ() * 0.5f));
+				cube->attachShape(*shape);
+				//PxRigidBodyExt::updateMassAndInertia(*cube, 0);
+				gScene->addActor(*cube);
+				objetos.push_back(new RenderItem(shape, cube, Vector4(1.0f, 0.0f, 0.0f, 1.0f)));
+			}
 			else if (c == 'm')
 			{
 				objetos.push_back(new RenderItem(
@@ -40,7 +48,9 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 			}
 			else if (c == 'b') // otro tipo de bloque
 			{
-				pr->setPose(PxVec3(pos.getX(), pos.getY(), pos.getZ()));
+				//pr->transform(PxTransform(pos.getX(), pos.getY(), pos.getZ()));
+				//objetos.push_back(pr); 
+				proyectil->setGlobalPose(PxTransform(pos.getX(), pos.getY(), pos.getZ()));
 				posIniPr = pos;
 				arrow = new RenderItem(CreateShape(PxBoxGeometry(0.5f, 0.2f, 0.2f)),
 					new PxTransform(pos.getX(), pos.getY(), pos.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
@@ -86,10 +96,11 @@ Mapa::Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, P
 
 void Mapa::update(double t, float angle)
 {
-	if (proyectil->getPose().x >= metaXBegin && proyectil->getPose().x <= metaXEnd
-		&& proyectil->getPose().y >= metaYBegin && proyectil->getPose().y <= metaYEnd) {
-		proyectil->setVel(Vector3D(0, 0, 0));
-		proyectil->setPose(PxVec3(posIniPr.getX(), posIniPr.getY(), posIniPr.getZ()));
+	if (proyectil->getGlobalPose().p.x >= metaXBegin && proyectil->getGlobalPose().p.x <= metaXEnd
+		&& proyectil->getGlobalPose().p.y >= metaYBegin && proyectil->getGlobalPose().p.y <= metaYEnd) {
+		proyectil->setGlobalPose(PxTransform(posIniPr.getX(), posIniPr.getY(), posIniPr.getZ()));
+		proyectil->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
+		proyectil->setLinearVelocity(PxVec3(0, 0, 0));
 		victoria = true;
 	}
 	if (posViento.getX() != -1)
@@ -121,5 +132,4 @@ void Mapa::update(double t, float angle)
 		if (arrow->transform) delete arrow->transform;
 		arrow->transform = new PxTransform(newTransform);
 	}
-	partSys->addForce(proyectil, t);
 }

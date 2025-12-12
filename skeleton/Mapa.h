@@ -12,7 +12,6 @@ class Mapa
 {
 private:
 	std::vector<RenderItem*> objetos;
-	Proyectil* proyectil;
 	float metaXBegin;
 	float metaXEnd;
 	float metaYBegin;
@@ -24,8 +23,11 @@ private:
 	RenderItem* arrow;
 	physx::PxVec3 initialArrowPos;
 	Vector3D posViento = Vector3(-1, -1, -1);
+	PxPhysics* gPhysics;
+	PxScene* gScene;
+	PxRigidDynamic* proyectil;
 public:
-	Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, Proyectil* pr);
+	Mapa(const std::string& filename, Vector3D startPos, Vector3D blockSize, PxRigidDynamic* ball, PxPhysics* gPhysics, PxScene* gScene);
 	void update(double t, float angle);
 };
 
