@@ -15,10 +15,10 @@ void ParticleSystem::update(double t, int p, Vector3D pos, bool windWillAffect, 
 	case HUMO:     part.push_back(fP->generaParticulaHumo(pos, windWillAffect, expWillAffect, springWillAffect)); break;
 	case ANIM: {
 		part.push_back(fP->generaParticulaAnimViento(pos, windWillAffect, expWillAffect, springWillAffect));
+		/*part.push_back(fP->generaParticulaAnimViento(pos, windWillAffect, expWillAffect, springWillAffect));
 		part.push_back(fP->generaParticulaAnimViento(pos, windWillAffect, expWillAffect, springWillAffect));
 		part.push_back(fP->generaParticulaAnimViento(pos, windWillAffect, expWillAffect, springWillAffect));
-		part.push_back(fP->generaParticulaAnimViento(pos, windWillAffect, expWillAffect, springWillAffect));
-		part.push_back(fP->generaParticulaAnimViento(pos, windWillAffect, expWillAffect, springWillAffect));
+		part.push_back(fP->generaParticulaAnimViento(pos, windWillAffect, expWillAffect, springWillAffect));*/
 		break;
 	}
 	}

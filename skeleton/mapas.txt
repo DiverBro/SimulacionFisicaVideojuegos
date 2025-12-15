@@ -1,0 +1,7 @@
+6
+Mapa1.txt
+Mapa2.txt
+Mapa3.txt
+Mapa4.txt
+Mapa5.txt
+win.txt

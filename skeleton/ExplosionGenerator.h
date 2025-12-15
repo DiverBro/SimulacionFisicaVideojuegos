@@ -11,6 +11,7 @@ public:
 	void resetExplosion();
 
 	void applyForce(class Particle* p, float t) override;
+	void applyForce(physx::PxRigidDynamic* p, float t) override;
 
 	float getTau() { return mTau; };
 	float getTime() { return mTime; };

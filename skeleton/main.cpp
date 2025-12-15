@@ -45,7 +45,7 @@ Mapa* map;
 int fuente = 0;
 float angleDeg = 0.0f;
 const float angleStep = 2.0f;
-const float speed = 25.0f;
+ float speed = 15.0f;
 
 
 // Initialize physics engine
@@ -97,8 +97,7 @@ void initPhysics(bool interactive)
 	proyectil->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
 	gScene->addActor(*proyectil);
 	RenderItem* rnd = new RenderItem(shape, proyectil, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-	map = new Mapa("mapa1.txt", Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil, gPhysics, gScene);
- 
+	map = new Mapa(0, Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil, gPhysics, gScene);
 }
 
 
@@ -160,6 +159,16 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		angleDeg -= angleStep;
 		break;
 	}
+	case 'T': {
+		if (speed < 80)
+		speed++;
+		break;
+	}
+	case 'G': {
+		if(speed > 15)
+		speed--;
+		break;
+	}
 	case ' ':
 	{
 		if (proyectil)  // Asegurándonos de que el rigidDynamic no sea nulo
@@ -174,7 +183,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 				PxVec3 vel(speed * cos(angleRad), speed * sin(angleRad), 0.0f);  // Usamos PxVec3 para la velocidad
 
 				proyectil->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, false);
-
+				proyectil->wakeUp();
 				// Asignamos la nueva velocidad al rigidDynamic
 				proyectil->setLinearVelocity(vel);
 
@@ -184,7 +193,11 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		}
 		break;
 	}
-	//PARTICULAS DEFINIDAS CON DISTINTA MASA + TIPOS DE BALAS
+	case '0': {
+		map->resetLevel(Vector3D(0, 0, 0), Vector3D(5, 5, 5));
+		break;
+	}
+			//PARTICULAS DEFINIDAS CON DISTINTA MASA + TIPOS DE BALAS
 	case 'J': {//BALA DE TANQUE
 		pr.push_back(new Proyectil(GetCamera()->getTransform().p, GetCamera()->getDir(), Vector3D(0, 0, 0), 1800.0f, 25.0f, 10.0f, { 1.0f, 0.0f, 0.0f, 1.0f }));
 		break;

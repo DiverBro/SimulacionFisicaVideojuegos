@@ -18,6 +18,7 @@
     <ClCompile Include="WindGenerator.cpp" />
     <ClCompile Include="ExplosionGenerator.cpp" />
     <ClCompile Include="SpringGenerator.cpp" />
+    <ClCompile Include="RigidBodySystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -39,6 +40,7 @@
     <ClInclude Include="WindGenerator.h" />
     <ClInclude Include="ExplosionGenerator.h" />
     <ClInclude Include="SpringGenerator.h" />
+    <ClInclude Include="RigidBodySystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

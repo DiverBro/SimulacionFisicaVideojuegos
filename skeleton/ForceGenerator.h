@@ -11,4 +11,5 @@ public:
 	ForceGenerator() {};
 	virtual ~ForceGenerator() {};
 	virtual void applyForce(class Particle* p, float t) {};
+	virtual void applyForce(physx::PxRigidDynamic* p, float t) {};
 };
