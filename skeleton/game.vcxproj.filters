@@ -19,6 +19,7 @@
     <ClCompile Include="ExplosionGenerator.cpp" />
     <ClCompile Include="SpringGenerator.cpp" />
     <ClCompile Include="RigidBodySystem.cpp" />
+    <ClCompile Include="FlotabilityGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="ExplosionGenerator.h" />
     <ClInclude Include="SpringGenerator.h" />
     <ClInclude Include="RigidBodySystem.h" />
+    <ClInclude Include="FlotabilityGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

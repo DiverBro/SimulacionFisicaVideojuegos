@@ -24,7 +24,7 @@ void RigidBodySystem::forceVertex(std::string tipo, Vector3D pos, Vector3D velOD
 		f = new WindGenerator(velOD, 1, 0);
 	}
 	else if (tipo == "spring") {
-		f = new SpringGenerator(pos, intensityOK, pos - velOD, radOL);
+		f = new SpringGenerator(pos, intensityOK, radOL);
 	}
 	forces.push_back(f);
 }

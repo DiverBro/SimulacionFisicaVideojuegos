@@ -255,6 +255,7 @@
   <ItemGroup>
     <ClCompile Include="callbacks.cpp" />
     <ClCompile Include="ExplosionGenerator.cpp" />
+    <ClCompile Include="FlotabilityGenerator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mapa.cpp" />
     <ClCompile Include="Particle.cpp" />
@@ -272,6 +273,7 @@
     <ClInclude Include="callbacks.hpp" />
     <ClInclude Include="core.hpp" />
     <ClInclude Include="ExplosionGenerator.h" />
+    <ClInclude Include="FlotabilityGenerator.h" />
     <ClInclude Include="ForceGenerator.h" />
     <ClInclude Include="FuenteParticulas.h" />
     <ClInclude Include="Mapa.h" />

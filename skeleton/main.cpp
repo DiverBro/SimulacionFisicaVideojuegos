@@ -38,6 +38,8 @@ PxScene* gScene = NULL;
 ContactReportCallback gContactReportCallback;
 
 Particle* part;
+Particle* p1;
+Particle* flotable;
 vector<Proyectil*> pr;
 ParticleSystem* pS;
 PxRigidDynamic* proyectil;
@@ -45,7 +47,7 @@ Mapa* map;
 int fuente = 0;
 float angleDeg = 0.0f;
 const float angleStep = 2.0f;
- float speed = 15.0f;
+float speed = 1.0f;
 
 
 // Initialize physics engine
@@ -77,27 +79,26 @@ void initPhysics(bool interactive)
 	Vector3D centre(0, 0, 0);
 
 	//EJES
-	/*RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+	RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(centre.getX(), centre.getY(), centre.getZ()), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 	RenderItem* eje1 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(-x.getX() * 10, -y.getY() * 10, centre.getZ()), Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 	RenderItem* eje2 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(x.getX() * 10, centre.getY() * 10, centre.getZ()), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	RenderItem* eje3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
-		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));*/
+		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
-		//part = new Particle(Vector3D(0, 0, 0), Vector3D(-10, 0, -10), Vector3D(-1, 0, 0), 0.999);
 
-	/*proyectil = new Proyectil(Vector3D(0, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 0, 0),
-		10.0f, 10.0f, 10.0f, { 1.0f, 1.0f, 1.0f, 1.0f });*/
-	proyectil = gPhysics->createRigidDynamic(PxTransform(0, 0, 0));
-	PxShape* shape = CreateShape(PxSphereGeometry(1));
-	proyectil->attachShape(*shape);
-	//PxRigidBodyExt::updateMassAndInertia(*cube, 0);
-	proyectil->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
-	gScene->addActor(*proyectil);
-	RenderItem* rnd = new RenderItem(shape, proyectil, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-	map = new Mapa(0, Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil, gPhysics, gScene);
+
+	//proyectil = gPhysics->createRigidDynamic(PxTransform(0, 0, 0));
+	//PxShape* shape = CreateShape(PxSphereGeometry(1));
+	//proyectil->attachShape(*shape);
+	////PxRigidBodyExt::updateMassAndInertia(*cube, 0);
+	//proyectil->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
+	//gScene->addActor(*proyectil);
+	//RenderItem* rnd = new RenderItem(shape, proyectil, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	//map = new Mapa(0, Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil, gPhysics, gScene);
+	//map->chargeBar(speed);
 }
 
 
@@ -112,6 +113,25 @@ void stepPhysics(bool interactive, double t)
 
 	for (Proyectil* p : pr) {
 		p->integ(t);
+	}
+
+	if (part) {
+		part->integ(t);
+		if (pS)
+			pS->addForce(part, t);
+	}
+
+	if (p1) {
+		p1->integ(t);
+		if (pS)
+			pS->addForce(p1, t);
+	}
+
+	if (flotable) {
+		flotable->integ(t);
+		if (pS) {
+			pS->addForce(flotable, t);
+		}
 	}
 
 	if (pS)
@@ -161,12 +181,18 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	}
 	case 'T': {
 		if (speed < 80)
-		speed++;
+		{
+			speed++;
+			map->chargeBar(speed);
+		}
 		break;
 	}
 	case 'G': {
-		if(speed > 15)
-		speed--;
+		if (speed > 2)
+		{
+			speed--;
+			map->chargeBar(speed);
+		}
 		break;
 	}
 	case ' ':
@@ -189,12 +215,14 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 				// Reiniciamos el ángulo después de disparar (igual que en tu código)
 				angleDeg = 0;
+				speed = 1;
+				map->chargeBar(speed);
 			}
 		}
 		break;
 	}
 	case '0': {
-		map->resetLevel(Vector3D(0, 0, 0), Vector3D(5, 5, 5));
+		map->resetLevel();
 		break;
 	}
 			//PARTICULAS DEFINIDAS CON DISTINTA MASA + TIPOS DE BALAS
@@ -244,8 +272,38 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		break;
 	}
 	case 'X': {
+		delete pS;
+		pS = new ParticleSystem();
+		fuente = -1;
 		if (pS)
-			pS->forceVertex("spring", Vector3D(0, 0, 0), Vector3D(0, 1, 0), 1, 10);
+		{
+			part = new Particle(Vector3D(0, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 0, 0), 0.999);
+			p1 = new Particle(Vector3D(0, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 0, 0), 0.999);
+			p1->setSpringAffects(true);
+			part->setSpringAffects(true);
+			part->setVel(Vector3D(0, 10, 0));
+			p1->setVel(Vector3D(0, 40, 0));
+			pS->forceVertex("spring", Vector3D(0, 0, 0), Vector3D(0, 1, 0), 100, 5, 1.5, p1);
+			pS->forceVertex("spring", Vector3D(0, 0, 0), Vector3D(0, 1, 0), 100, 5, 1.5, part);
+		}
+		break;
+	}
+	case '1': {
+		if (pS)
+		{
+			pS->forceVertex("spring", Vector3D(0, 0, 0), Vector3D(0, 1, 0), 1000, 10);
+		}
+		break;
+	}
+	case '2': {
+		delete pS;
+		pS = new ParticleSystem();
+		fuente = -1;
+		if (pS)
+		{
+			flotable = new Particle(Vector3D(0, 40, 0), Vector3D(0, 0, 0), Vector3D(0, 0, 0), 0.999, 10);
+			pS->forceVertex("flotability", Vector3D(0, 0, 0), Vector3D(0, 1, 0), 1000, 10);
+		}
 		break;
 	}
 	case 'P': {

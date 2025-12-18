@@ -9,19 +9,20 @@ Mapa::Mapa(int i, Vector3D startPos, Vector3D blockSize, PxRigidDynamic* ball, P
 	rigidSysWind = new RigidBodySystem();
 	fillMaps("mapas.txt");
 	createMap(map[i], startPos, blockSize);
+
 }
 
 void Mapa::update(double t, float angle)
 {
-	rigidSysWind->addForce(proyectil, t);
-	rigidSysExp->addForce(proyectil, t);
-
 	if (proyectil->getGlobalPose().p.x >= metaXBegin && proyectil->getGlobalPose().p.x <= metaXEnd
 		&& proyectil->getGlobalPose().p.y >= metaYBegin && proyectil->getGlobalPose().p.y <= metaYEnd) {
+		proyectil->setGlobalPose(PxTransform({ 1000, 1000, 0 }));
 		victoria = true;
 	}
 	if (posViento.getX() != -1)
 		partSys->update(t, 3, posViento, true);
+	rigidSysWind->addForce(proyectil, t);
+	rigidSysExp->addForce(proyectil, t);
 
 	if (victoria)
 	{
@@ -30,33 +31,59 @@ void Mapa::update(double t, float angle)
 		partSys->update(t, 2, Vector3D(35, 0, -5), false);
 		if (tiempo >= 6)
 		{
-			changeMap(startPos, blockSize);
+			changeMap();
 			victoria = false;
 			tiempo = 0;
 			partSys->clearParticles();
 		}
 	}
 
-	if (arrow) {
-		float angleRad = angle * PxPi / 180.0f;
+	float angleRad = angle * PxPi / 180.0f;
+	PxVec3 forward(cosf(angleRad), sinf(angleRad), 0.0f);
 
-		// Vector frente en el plano XY (rotando sobre Z)
-		PxVec3 forward(cosf(angleRad), sinf(angleRad), 0.0f);
+	float spacing = blockSize.getX() * 0.04f;
 
-		float distancia = 2.5f;
+	for (int i = 0; i < powerBar.size(); ++i) {
+		RenderItem* bar = powerBar[i];
 
-		PxTransform newTransform(initialArrowPos + forward * distancia, PxQuat(angleRad, PxVec3(0.0f, 0.0f, 1.0f)));
-		if (!proyectil->isSleeping()) {
-			newTransform = PxTransform(Vector3(10000, 10000, 10000), PxQuat(angleRad, PxVec3(0.0f, 0.0f, 1.0f)));
+		float dist = spacing * (i + 1);
+
+		PxVec3 pos = PxVec3(
+			initialArrowPos.x,
+			initialArrowPos.y,
+			initialArrowPos.z
+		) + forward * (dist + blockSize.getX() * 0.25);
+
+		PxTransform t(
+			pos,
+			PxQuat(angleRad, PxVec3(0, 0, 1))
+		);
+
+		delete bar->transform;
+		bar->transform = new PxTransform(t);
+	}
+
+	if (!proyectil->isSleeping())
+	{
+		for (RenderItem* bar : powerBar)
+		{
+			if (bar->transform)
+				delete bar->transform;
+
+			bar->transform = new PxTransform(PxVec3(10000.0f, 10000.0f, 10000.0f));
 		}
+		reset = false;
+	}
 
-		if (arrow->transform) delete arrow->transform;
-		arrow->transform = new PxTransform(newTransform);
+	if (proyectil->isSleeping() && !victoria && !reset) {
+		resetLevel();
+		reset = true;
 	}
 }
 
 void Mapa::createMap(std::string filename, Vector3D startPos, Vector3D blockSize)
 {
+	if (filename == "win.txt") startPos = Vector3D(-5, 0, -5);
 	std::ifstream file(filename);
 	if (!file.is_open()) return;
 
@@ -82,7 +109,7 @@ void Mapa::createMap(std::string filename, Vector3D startPos, Vector3D blockSize
 				cube->attachShape(*shape);
 				//PxRigidBodyExt::updateMassAndInertia(*cube, 0);
 				gScene->addActor(*cube);
-				objetos.push_back(new RenderItem(shape, cube, Vector4(1.0f, 0.0f, 0.0f, 1.0f)));
+				objetos.push_back(new RenderItem(shape, cube, Vector4(1.0f, 0.0f, 1.0f, 1.0f)));
 			}
 			else if (c == 'm')
 			{
@@ -100,10 +127,7 @@ void Mapa::createMap(std::string filename, Vector3D startPos, Vector3D blockSize
 				proyectil->setLinearVelocity(PxVec3(0, 0, 0));
 				proyectil->putToSleep();
 				posIniPr = pos;
-				arrow = new RenderItem(CreateShape(PxBoxGeometry(0.5f, 0.2f, 0.2f)),
-					new PxTransform(pos.getX(), pos.getY(), pos.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
-				initialArrowPos = arrow->transform->p;
-				objetos.push_back(arrow);
+				initialArrowPos = PxVec3(pos.getX(), pos.getY(), pos.getZ());
 			}
 			else if (c == 'V')
 			{
@@ -145,7 +169,7 @@ void Mapa::createMap(std::string filename, Vector3D startPos, Vector3D blockSize
 	}
 }
 
-void Mapa::changeMap(Vector3D startPos, Vector3D blockSize)
+void Mapa::changeMap()
 {
 	posViento.setX(-1);
 	rigidSysWind->clearForceVertex();
@@ -171,7 +195,7 @@ void Mapa::changeMap(Vector3D startPos, Vector3D blockSize)
 	createMap(map[i], startPos, blockSize);
 }
 
-void Mapa::resetLevel(Vector3D startPos, Vector3D blockSize)
+void Mapa::resetLevel()
 {
 	posViento.setX(-1);
 	rigidSysWind->clearForceVertex();
@@ -208,5 +232,24 @@ void Mapa::fillMaps(const std::string& filename)
 	for (int i = 0; i < length; i++) {
 		std::getline(file, line);
 		map.push_back(line);
+	}
+}
+
+void Mapa::chargeBar(float p)
+{
+	for (RenderItem* o : powerBar) {
+		o->release();
+	}
+	powerBar.clear();
+
+	float tam = 80;
+
+	for (int i = 1; i <= p; i++) {
+		float rg = i / tam;
+		powerBar.push_back(new RenderItem(
+			CreateShape(PxBoxGeometry(blockSize.getX() * 0.02f, blockSize.getY() * 0.05f, blockSize.getZ() * 0.05f)),
+			new PxTransform(startPos.getX() + blockSize.getX() * 0.04 * i, startPos.getY(), blockSize.getZ() / 2),
+			Vector4(rg, 1 - rg, 0.0f, 1.0f)
+		));
 	}
 }

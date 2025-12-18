@@ -15,20 +15,22 @@ void ParticleSystem::update(double t, int p, Vector3D pos, bool windWillAffect, 
 	case HUMO:     part.push_back(fP->generaParticulaHumo(pos, windWillAffect, expWillAffect, springWillAffect)); break;
 	case ANIM: {
 		part.push_back(fP->generaParticulaAnimViento(pos, windWillAffect, expWillAffect, springWillAffect));
-		/*part.push_back(fP->generaParticulaAnimViento(pos, windWillAffect, expWillAffect, springWillAffect));
-		part.push_back(fP->generaParticulaAnimViento(pos, windWillAffect, expWillAffect, springWillAffect));
-		part.push_back(fP->generaParticulaAnimViento(pos, windWillAffect, expWillAffect, springWillAffect));
-		part.push_back(fP->generaParticulaAnimViento(pos, windWillAffect, expWillAffect, springWillAffect));*/
 		break;
 	}
 	}
-	for (Particle* p : part) {
+	for (auto it = part.begin(); it != part.end(); ) {
+		Particle* p = *it;
+
 		addForce(p, t);
 		p->integ(t);
 		p->setTiempo(p->getTiempo() - t);
+
 		if (p->getTiempo() <= 0) {
-			part.erase(std::remove(part.begin(), part.end(), p), part.end());
 			delete p;
+			it = part.erase(it);
+		}
+		else {
+			++it;
 		}
 	}
 
@@ -61,7 +63,7 @@ void ParticleSystem::addForce(Particle* p, double t)
 	}
 }
 
-void ParticleSystem::forceVertex(std::string tipo, Vector3D pos, Vector3D velOD, float intensityOK, float radOL, float time)
+void ParticleSystem::forceVertex(std::string tipo, Vector3D pos, Vector3D velOD, float intensityOK, float radOL, float time, Particle* spring)
 {
 	ForceGenerator* f;
 	if (tipo == "explosion") {
@@ -72,7 +74,10 @@ void ParticleSystem::forceVertex(std::string tipo, Vector3D pos, Vector3D velOD,
 		f = new WindGenerator(velOD, 1, 0);
 	}
 	else if (tipo == "spring") {
-		f = new SpringGenerator(pos, intensityOK, pos - velOD, radOL);
+		f = new SpringGenerator(pos, intensityOK, radOL, spring);
+	}
+	else if (tipo == "flotability") {
+		f = new FlotabilityGenerator(0, 0, 1, 1000, 10);
 	}
 	forces.push_back(f);
 }
