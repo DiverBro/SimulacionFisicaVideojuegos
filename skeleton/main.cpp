@@ -79,26 +79,26 @@ void initPhysics(bool interactive)
 	Vector3D centre(0, 0, 0);
 
 	//EJES
-	RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
+	/*RenderItem* render_Item = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(centre.getX(), centre.getY(), centre.getZ()), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 	RenderItem* eje1 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(-x.getX() * 10, -y.getY() * 10, centre.getZ()), Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 	RenderItem* eje2 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
 		new PxTransform(x.getX() * 10, centre.getY() * 10, centre.getZ()), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	RenderItem* eje3 = new RenderItem(CreateShape(PxSphereGeometry(1.0f)),
-		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+		new PxTransform(centre.getX(), y.getY() * 10, centre.getZ()), Vector4(0.0f, 1.0f, 0.0f, 1.0f));*/
 
 
 
-	//proyectil = gPhysics->createRigidDynamic(PxTransform(0, 0, 0));
-	//PxShape* shape = CreateShape(PxSphereGeometry(1));
-	//proyectil->attachShape(*shape);
-	////PxRigidBodyExt::updateMassAndInertia(*cube, 0);
-	//proyectil->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
-	//gScene->addActor(*proyectil);
-	//RenderItem* rnd = new RenderItem(shape, proyectil, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-	//map = new Mapa(0, Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil, gPhysics, gScene);
-	//map->chargeBar(speed);
+	proyectil = gPhysics->createRigidDynamic(PxTransform(0, 0, 0));
+	PxShape* shape = CreateShape(PxSphereGeometry(1));
+	proyectil->attachShape(*shape);
+	//PxRigidBodyExt::updateMassAndInertia(*cube, 0);
+	proyectil->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
+	gScene->addActor(*proyectil);
+	RenderItem* rnd = new RenderItem(shape, proyectil, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	map = new Mapa(0, Vector3D(0, 0, 0), Vector3D(5, 5, 5), proyectil, gPhysics, gScene);
+	map->chargeBar(speed);
 }
 
 
