@@ -62,7 +62,7 @@ public:
 		std::normal_distribution<double> posZ(0, 0.7f);
 
 		Particle* p = new Particle(Vector3D(pos.getX(), pos.getY() + posY(gen), pos.getZ() + posZ(gen)), Vector3D(0, 0, 0),
-			Vector3D(0, 0, 0), 0.999, 0.1f, 0.3f, 10.0f, Vector3D(0, 0, 0), { 0.0f, 0.0f, 1.0f, 0.3f });
+			Vector3D(0, 0, 0), 0.999, 0.1f, 0.15f, 10.0f, Vector3D(0, 0, 0), { 0.0f, 0.0f, 1.0f, 0.3f });
 		p->setWindAffects(windWillAffect);
 		p->setExpAffects(expWillAffect);
 		p->setSpringAffects(springWillAffect);
