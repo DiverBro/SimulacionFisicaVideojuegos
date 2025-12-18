@@ -33,7 +33,7 @@ void WindGenerator::applyForce(physx::PxRigidDynamic* p, float t)
 		force = force + (relVel * (mK2 * mag));
 	}
 
-	p->addForce({ float(force.getX()), float(force.getY()), float(force.getZ()) }); // actualiza velocidad: v += F/m * t
+	p->addForce(physx::PxVec3(float(force.getX()), float(force.getY()), float(force.getZ())) * t); // actualiza velocidad: v += F/m * t
 }
 
 void WindGenerator::setWindVelocity(const Vector3D& windVel) { mWindVelocity = windVel; }

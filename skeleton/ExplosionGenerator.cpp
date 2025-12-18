@@ -60,6 +60,6 @@ void ExplosionGenerator::applyForce(physx::PxRigidDynamic* p, float t)
 
 		Vector3D force = dir * magnitude;
 
-		p->addForce({ float(force.getX()), float(force.getY()), float(force.getZ()) });
+		p->addForce(physx::PxVec3(float(force.getX()), float(force.getY()), float(force.getZ())) * t);
 	}
 }
